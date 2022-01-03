@@ -75,11 +75,15 @@ app.use((req, res, next) => {
         }
     })
     .then(user => {
+        if (!user) return next();
         req.user = user;
-        return req.user.createCart();
+        return req.user.createCart()
+        .then(result => {
+            next();
+        });
     })
-    .then(cart => {
-        next();
+    .catch(err => {
+        console.log(err);
     })
 })
 

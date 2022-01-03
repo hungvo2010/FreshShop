@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcryptjs = require("bcryptjs");
+const sendMail = require('../util/sendEmail');
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('errorLogin');
@@ -82,6 +83,7 @@ exports.postSignup = (req, res, nexy) => {
         })
         .then(user => {
             res.redirect('/login');
+            sendMail(email);
         })
         .catch(err => {
             console.log(err);
