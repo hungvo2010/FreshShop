@@ -9,6 +9,22 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const MySQLStore = require('express-mysql-session')(session);
 
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
+const errorController = require('./controllers/error');
+
+const app = express();
+
+const csrfProtection = csrf();
+
+const mysqlStore = new MySQLStore({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    database: 'session',
+})
+
 const Product = require('./models/product');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cartItem');
@@ -26,24 +42,8 @@ Order.belongsToMany(Product, {through: OrderItem}); // m:n relationship
 Product.belongsToMany(Cart, {through: CartItem}); // m:n relationship
 Cart.belongsToMany(Product, {through: CartItem}); // m:n relationship
 
-const errorController = require('./controllers/error');
-
-const app = express();
-
 app.set('view engine', 'ejs');
 app.set('views', 'views');
-
-
-const mysqlStore = new MySQLStore({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: 'session',
-})
-
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
-const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -55,7 +55,6 @@ app.use(session({
     store: mysqlStore,
 }))
 
-const csrfProtection = csrf();
 app.use(csrfProtection);
 app.use(flash());
 

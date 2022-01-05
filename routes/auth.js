@@ -1,4 +1,5 @@
 const express = require('express');
+const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
 
 const authController = require('../controllers/auth');
 
@@ -18,5 +19,17 @@ router.post('/signup', authController.postSignup);
 
 // /logout => POST
 router.post('/logout', authController.postLogout);
+
+// /reset => GET
+router.get('/reset', authController.getReset);
+
+// /reset => POST
+router.post('/reset', authController.postReset);
+
+// /reset/resetPassword => GET
+router.get('/reset/:resetToken', authController.getResetPassword);
+
+// /reset/new-password => POST
+router.post('/new-password', authController.postNewPassword);
 
 module.exports = router;
