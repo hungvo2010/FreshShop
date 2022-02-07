@@ -2,6 +2,7 @@ const path = require('path');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const express = require('express');
+const logger = require('morgan');
 const bodyParser = require('body-parser');
 const sequelize = require('./util/database');
 const session = require('express-session');
@@ -45,6 +46,7 @@ Cart.belongsToMany(Product, {through: CartItem}); // m:n relationship
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+app.use(logger('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -90,6 +92,15 @@ app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get404);
+
+app.use(function(err, req, res, next) {
+    // set locals, only providing error in development
+    res.locals.message = err.message;
+    res.locals.error = req.app.get('env') === 'development' ? err : {};
+  
+    // render the error page
+    errorController.get500();
+});
 
 sequelize.sync()
 .then(db => {
