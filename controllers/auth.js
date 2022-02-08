@@ -5,6 +5,7 @@ const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
 const emailTransporter = require('../util/emailTransporter');
+const { validationResult } = require('express-validator/check');
 
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
@@ -15,12 +16,27 @@ exports.getLogin = (req, res, next) => {
         path: '/login',
         pageTitle: 'Login',
         errorMessage: message,
+        oldInput: {},
     })
 }
 
 exports.postLogin = (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.render('auth/login', {
+            path: '/login',
+            pageTitle: 'Login',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                email,
+                password,
+            },
+        })
+    }
+
     User.findOne({
         where: {
             email,
@@ -63,6 +79,7 @@ exports.getSignup = (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         errorMessage: message,
+        oldInput: {}
     })
 }
 
@@ -70,6 +87,21 @@ exports.postSignup = (req, res, nexy) => {
     const email = req.body.email;
     const password = req.body.password;
     const retypepassword = req.body.retypepassword;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.render('auth/signup', {
+            path: '/signup',
+            pageTitle: 'Signup',
+            errorMessage: errors.array()[0].msg,
+            oldInput: {
+                email,
+                password,
+                retypepassword
+            }
+        })
+    }
+
     User.findOne({
         where: {
             email: email,

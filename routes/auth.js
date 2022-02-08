@@ -1,5 +1,7 @@
 const express = require('express');
-const { auth } = require('googleapis/build/src/apis/abusiveexperiencereport');
+const { check } = require('express-validator/check');
+const { body } = require('express-validator/check');
+const User = require('../models/user');
 
 const authController = require('../controllers/auth');
 
@@ -9,13 +11,37 @@ const router = express.Router();
 router.get('/login', authController.getLogin);
 
 // /login => POST
-router.post('/login', authController.postLogin);
+router.post('/login', [
+    body('email').isEmail().withMessage('Your email is in invalid format')
+    .custom((value, {req}) => {
+        return User.findOne({
+            where: {
+                email: req.body.email,
+            }
+        })
+        .then(user => {
+            if (!user){
+                return Promise.reject('No account with this email found');
+            }
+        })
+    }),
+    body('password').trim().not().isEmpty().withMessage('Your password is empty')
+], authController.postLogin);
 
 // /signup => GET,
 router.get('/signup', authController.getSignup);
 
 // /signup => POST,
-router.post('/signup', authController.postSignup);
+router.post('/signup', [
+    check('email').isEmail().withMessage('Your email is in invalid format'),
+    check('password').trim().isLength({min: 3}).withMessage('Your password is two short'),
+    check('retypepassword').trim().custom((value, {req}) => {
+        if (value !== req.body.password){
+            throw new Error('Your confirm password was not match.');
+        }
+        return true;
+    })
+], authController.postSignup);
 
 // /logout => POST
 router.post('/logout', authController.postLogout);
