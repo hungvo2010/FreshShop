@@ -81,11 +81,16 @@ app.use((req, res, next) => {
         return req.user.createCart()
         .then(result => {
             next();
+        })
+        .catch(err => {
+            console.log(err);
+            return next(new Error(err));
         });
     })
     .catch(err => {
         console.log(err);
-    })
+        return next(new Error(err));
+    });
 })
 
 app.use('/admin', adminRoutes);
@@ -94,12 +99,11 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 app.use(function(err, req, res, next) {
-    // set locals, only providing error in development
-    res.locals.message = err.message;
-    res.locals.error = req.app.get('env') === 'development' ? err : {};
-  
-    // render the error page
-    errorController.get500();
+    res.status(500).render('500', 
+    {
+        pageTitle: '500 Page',
+        path: req.url,
+    });
 });
 
 sequelize.sync()

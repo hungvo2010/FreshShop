@@ -200,6 +200,7 @@ exports.postReset = (req, res, next) => {
             })
             .catch(err => {
                 console.log(err);
+                return next(new Error(err));
             })
             const emailOptions = {
                 from: process.env.USER_EMAIL,
@@ -237,6 +238,10 @@ exports.getResetPassword = (req, res, next) => {
             userId: existToken.userId,            
         })
     })
+    .catch(err => {
+        console.log(err);
+        return next(new Error(err));
+    })
 }
 
 exports.postNewPassword = (req, res, next) => {
@@ -269,9 +274,14 @@ exports.postNewPassword = (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
+            return next(new Error(err));
         })
     })
     .then(result => {
         res.redirect('/login');
+    })
+    .catch(err => {
+        console.log(err);
+        return next(new Error(err));
     })
 }

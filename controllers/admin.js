@@ -20,6 +20,10 @@ exports.postAddProduct = (req, res, next) => {
   .then(result => {
     res.redirect('/admin/products');
   })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 };
 
 exports.getProducts = (req, res, next) => {
@@ -30,6 +34,10 @@ exports.getProducts = (req, res, next) => {
       pageTitle: 'Admin Products',
       path: '/admin/products'
     });
+  })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
   })
 };
 
@@ -60,6 +68,10 @@ exports.postEditProduct = (req, res, next) => {
   .then(prod => {
     res.redirect('/admin/products');
   })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 }
 
 exports.getEditProduct = (req, res, next) => {
@@ -83,6 +95,10 @@ exports.getEditProduct = (req, res, next) => {
       editMode: req.query.editMode, // in Edit Product page
     })
   })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 }
 
 exports.postDeleteProduct = (req, res, next) => {
@@ -103,5 +119,9 @@ exports.postDeleteProduct = (req, res, next) => {
   })
   .then(prod => {
     return res.redirect('/admin/products');
+  })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
   })
 }

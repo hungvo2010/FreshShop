@@ -8,7 +8,11 @@ exports.getProducts = (req, res, next) => {
       pageTitle: 'All Products',
       path: '/products'
     });
-  });
+  })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 };
 
 exports.getProductDetail = (req, res, next) => {
@@ -24,6 +28,10 @@ exports.getProductDetail = (req, res, next) => {
       path: '/products/' + product.id,
     })
   })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 }
 
 exports.getIndex = (req, res, next) => {
@@ -34,7 +42,11 @@ exports.getIndex = (req, res, next) => {
       pageTitle: 'Shop',
       path: '/'
     });
-  });
+  })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
+  })
 };
 
 exports.getCart = (req, res, next) => {
@@ -56,6 +68,7 @@ exports.getCart = (req, res, next) => {
   })
   .catch(err => {
     console.log(err);
+    return next(new Error(err));
   })
 };
 
@@ -95,6 +108,7 @@ exports.postCart = (req, res, next) => {
   })
   .catch(err => {
     console.log(err);
+    return next(new Error(err));
   })
 }
 
@@ -117,7 +131,8 @@ exports.deleteCart = (req, res, next) => {
     return res.redirect('/cart');
   })
   .catch(err => {
-    console.log(err); 
+    console.log(err);
+    return next(new Error(err));
   })
 }
 
@@ -134,7 +149,8 @@ exports.getOrders = (req, res, next) => {
   })
   .catch(err => {
     console.log(err);
-  })  
+    return next(new Error(err));
+  })
 };
 
 exports.postOrders = (req, res, next) => {
@@ -154,12 +170,20 @@ exports.postOrders = (req, res, next) => {
         return product;
       }))
     })
+    .catch(err => {
+      console.log(err);
+      return next(new Error(err));
+    })
   })
   .then(result => {
     return fetchedCart.setProducts(null);
   })
   .then(() => {
     res.redirect('/orders');
+  })
+  .catch(err => {
+    console.log(err);
+    return next(new Error(err));
   })
 }
 
