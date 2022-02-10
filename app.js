@@ -8,6 +8,7 @@ const sequelize = require('./util/database');
 const session = require('express-session');
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 const MySQLStore = require('express-mysql-session')(session);
 
 const adminRoutes = require('./routes/admin');
@@ -47,8 +48,32 @@ app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(logger('dev'));
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg'){
+        cb(null, true);
+    }
+    else {
+        cb(null, false);
+    }
+}
+
+app.use(multer({
+    storage: fileStorage,
+    // dest: 'images',
+    fileFilter: fileFilter,
+}).single('image'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -99,10 +124,12 @@ app.use(authRoutes);
 app.use(errorController.get404);
 
 app.use(function(err, req, res, next) {
+    console.log(err);
     res.status(500).render('500', 
     {
         pageTitle: '500 Page',
         path: req.url,
+        isAuthenticated: false
     });
 });
 

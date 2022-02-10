@@ -3,17 +3,31 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: 'Add Product',
     path: '/admin/add-product', 
     editMode: false, // in Add Product page
+    errorMessage: ''
   });
 };
 
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const price = req.body.price;
   const description = req.body.description;
+
+  // console.log(image.path);
+  // console.log(image);
+
+  if (!image){
+    return res.render('admin/edit-product', {
+      pageTitle: 'Add Product',
+      path: '/admin/add-product', 
+      editMode: false, // in Add Product page
+      errorMessage: 'Your file attached is not valid.'
+    });
+  }
+
   req.user.createProduct({
     title,
-    imageUrl,
+    imageUrl: image.path,
     price,
     description,
   })
@@ -44,7 +58,7 @@ exports.getProducts = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
   const productId = req.body.productId;
   const newTitle = req.body.title;
-  const newImageUrl = req.body.imageUrl;
+  const newImage = req.file;
   const newPrice = req.body.price;
   const newDescription = req.body.description;
   req.user.getProducts({
@@ -60,7 +74,9 @@ exports.postEditProduct = (req, res, next) => {
       return res.redirect('/admin/products');
     }
     product.title = newTitle;
-    product.imageUrl = newImageUrl;
+    if (newImage){
+      product.imageUrl = newImage.path;      
+    }
     product.price = newPrice;
     product.description = newDescription;
     return product.save();
