@@ -109,6 +109,7 @@ exports.getEditProduct = (req, res, next) => {
       pageTitle: 'Edit Product',
       path: req.url,
       editMode: req.query.editMode, // in Edit Product page
+      errorMessage: ''
     })
   })
   .catch(err => {
