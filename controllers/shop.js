@@ -1,4 +1,7 @@
 const Product = require('../models/product');
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
 
 exports.getProducts = (req, res, next) => {
   Product.findAll()
@@ -193,3 +196,49 @@ exports.getCheckout = (req, res, next) => {
     pageTitle: 'Checkout'
   });
 };
+
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  req.user.getOrders({
+    where: {
+      id: orderId,
+    },
+    include: "Products",
+  })
+  .then(orders => {
+    // console.log(JSON.stringify(orders));
+    if (orders.length == 0){
+      return next(new Error("Something wrong occured"));
+    }
+    const order = orders[0];
+    const invoiceName = 'invoice-' + orderId;
+    const invoicePath = path.join('data', 'invoices', invoiceName);
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+    const PDFDoc = new PDFDocument();
+    PDFDoc.pipe(res);
+    PDFDoc.pipe(fs.createWriteStream(invoicePath));
+
+    // populate content to invoice file
+    PDFDoc.fontSize(20).text("Invoice");
+    PDFDoc.fontSize(16).text("-------------------------------");
+    let totalPrice = 0;
+    order.Products.forEach(prod => {
+      PDFDoc.text(prod.title + " - " + prod.OrderItem.quantity + " x " + prod.price);
+      totalPrice += prod.price * prod.OrderItem.quantity;
+    })
+    PDFDoc.text("--------");
+    PDFDoc.text("Total price: " + totalPrice);
+
+    PDFDoc.end();
+
+    // Implementation for preloading data
+    // fs.readFile(invoicePath, (err, data) => {
+    //   if (!err){
+    //     return next(new Error('Something wrong occured'));
+    //   }
+    //   res.send(data);
+    // })    
+
+  })
+}

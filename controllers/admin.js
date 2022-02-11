@@ -1,3 +1,4 @@
+const deleteFile = require('../util/deleteFile');
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -75,6 +76,7 @@ exports.postEditProduct = (req, res, next) => {
     }
     product.title = newTitle;
     if (newImage){
+      deleteFile(product.imageUrl);
       product.imageUrl = newImage.path;      
     }
     product.price = newPrice;
@@ -132,6 +134,7 @@ exports.postDeleteProduct = (req, res, next) => {
     if (!product){
       return res.redirect('/admin/products');
     }
+    deleteFile(product.imageUrl);
     return product.destroy();
   })
   .then(prod => {

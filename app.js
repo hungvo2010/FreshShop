@@ -107,7 +107,7 @@ app.use(function(err, req, res, next) {
     {
         pageTitle: '500 Page',
         path: req.url,
-        isAuthenticated: false
+        isAuthenticated: req.session.isLoggedIn || false
     });
 });
 
