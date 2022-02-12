@@ -136,7 +136,7 @@ exports.getEditProduct = (req, res, next) => {
 }
 
 exports.postDeleteProduct = (req, res, next) => {
-  const productId = req.body.productId;
+  const productId = req.params.productId;
   req.user.getProducts({
     where: {
       id: productId,
@@ -153,10 +153,10 @@ exports.postDeleteProduct = (req, res, next) => {
     return product.destroy();
   })
   .then(prod => {
-    return res.redirect('/admin/products');
+    return res.status(200).json({});
   })
   .catch(err => {
     console.log(err);
-    return next(new Error(err));
+    return res.status(500).json({});
   })
 }
