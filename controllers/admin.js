@@ -1,4 +1,7 @@
 const deleteFile = require('../util/deleteFile');
+
+const ITEMS_PER_PAGE = 2; 
+
 exports.getAddProduct = (req, res, next) => {
   res.render('admin/edit-product', {
     pageTitle: 'Add Product',
@@ -42,17 +45,29 @@ exports.postAddProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  req.user.getProducts()
-  .then(products => {
-    res.render('admin/products', {
-      prods: products,
-      pageTitle: 'Admin Products',
-      path: '/admin/products'
-    });
-  })
-  .catch(err => {
-    console.log(err);
-    return next(new Error(err));
+  const page = req.query.page || 1;
+  let totalItems = 0;
+  req.user.countProducts()
+  .then(num => {
+    totalItems = num;
+    const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    req.user.getProducts({
+      limit: ITEMS_PER_PAGE,
+      offset: (page - 1) * ITEMS_PER_PAGE
+    })
+    .then(products => {
+      res.render('admin/products', {
+        prods: products,
+        pageTitle: 'Admin Products',
+        path: '/admin/products',
+        currentPage: +page,
+        lastPage
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return next(new Error(err));
+    })
   })
 };
 

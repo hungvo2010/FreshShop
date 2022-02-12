@@ -3,18 +3,32 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getProducts = (req, res, next) => {
-  Product.findAll()
-  .then(products => {
-    res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'All Products',
-      path: '/products'
-    });
-  })
-  .catch(err => {
-    console.log(err);
-    return next(new Error(err));
+  const page = req.query.page || 1;
+  let totalItems = 0;
+  Product.count()
+  .then(num => {
+    totalItems = num;
+    const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    Product.findAll({
+      offset: (page - 1) * ITEMS_PER_PAGE,
+      limit: ITEMS_PER_PAGE
+    })
+    .then(products => {
+      res.render('shop/product-list', {
+        prods: products,
+        pageTitle: 'All Products',
+        path: '/products',
+        currentPage: +page,
+        lastPage,
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return next(new Error(err));
+    })
   })
 };
 
@@ -38,17 +52,29 @@ exports.getProductDetail = (req, res, next) => {
 }
 
 exports.getIndex = (req, res, next) => {
-  Product.findAll()
-  .then(products => {
-    res.render('shop/product-list', {
-      prods: products,
-      pageTitle: 'Shop',
-      path: '/'
-    });
-  })
-  .catch(err => {
-    console.log(err);
-    return next(new Error(err));
+  const page = req.query.page || 1;
+  let totalItems = 0;
+  Product.count()
+  .then(num => {
+    totalItems = num;
+    const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+    Product.findAll({
+      offset: (page - 1) * ITEMS_PER_PAGE,
+      limit: ITEMS_PER_PAGE
+    })
+    .then(products => {
+      res.render('shop/index', {
+        prods: products,
+        pageTitle: 'All Products',
+        path: '/products',
+        currentPage: +page,
+        lastPage,
+      });
+    })
+    .catch(err => {
+      console.log(err);
+      return next(new Error(err));
+    })
   })
 };
 
