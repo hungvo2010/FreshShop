@@ -11,7 +11,7 @@ exports.getAddProduct = (req, res, next) => {
   });
 };
 
-exports.postAddProduct = (req, res, next) => {
+exports.postAddProduct = async (req, res, next) => {
   const title = req.body.title;
   const image = req.file;
   const price = req.body.price;
@@ -29,63 +29,57 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  req.user.createProduct({
-    title,
-    imageUrl: image.path,
-    price,
-    description,
-  })
-  .then(result => {
+  try {
+    await req.user.createProduct({
+      title,
+      imageUrl: image.path,
+      price,
+      description,
+    });
     res.redirect('/admin/products');
-  })
-  .catch(err => {
+  }
+  catch (err) {
     console.log(err);
     return next(new Error(err));
-  })
+  }
 };
 
-exports.getProducts = (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
   const page = req.query.page || 1;
-  let totalItems = 0;
-  req.user.countProducts()
-  .then(num => {
-    totalItems = num;
+  try {
+    const totalItems = await req.user.countProducts();
     const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    req.user.getProducts({
+    const products = await req.user.getProducts({
       limit: ITEMS_PER_PAGE,
       offset: (page - 1) * ITEMS_PER_PAGE
-    })
-    .then(products => {
-      res.render('admin/products', {
-        prods: products,
-        pageTitle: 'Admin Products',
-        path: '/admin/products',
-        currentPage: +page,
-        lastPage
-      });
-    })
-    .catch(err => {
+    });
+    res.render('admin/products', {
+      prods: products,
+      pageTitle: 'Admin Products',
+      path: '/admin/products',
+      currentPage: +page,
+      lastPage
+    });
+  }
+    catch (err) {
       console.log(err);
       return next(new Error(err));
-    })
-  })
+    }
 };
 
-exports.postEditProduct = (req, res, next) => {
+exports.postEditProduct = async (req, res, next) => {
   const productId = req.body.productId;
   const newTitle = req.body.title;
   const newImage = req.file;
   const newPrice = req.body.price;
   const newDescription = req.body.description;
-  req.user.getProducts({
-    where: {
-      id: productId,
-    }
-  })
-  .then(products => {
-    return products.length > 0 ? products[0] : null;
-  })
-  .then(product => {
+  try {
+    let products = await req.user.getProducts({
+      where: {
+        id: productId,
+      }
+    });
+    let product = products.length > 0 ? products[0] : null;
     if (!product){
       return res.redirect('/admin/products');
     }
@@ -96,28 +90,24 @@ exports.postEditProduct = (req, res, next) => {
     }
     product.price = newPrice;
     product.description = newDescription;
-    return product.save();
-  })
-  .then(prod => {
+    await product.save();
     res.redirect('/admin/products');
-  })
-  .catch(err => {
+  }
+  catch (err){
     console.log(err);
     return next(new Error(err));
-  })
+  }
 }
 
-exports.getEditProduct = (req, res, next) => {
+exports.getEditProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  req.user.getProducts({
-    where: {
-      id: productId,
-    }
-  })
-  .then(products => {
-    return products.length > 0 ? products[0] : null;
-  })
-  .then(product => {
+  try {
+    const products = await req.user.getProducts({
+      where: {
+        id: productId,
+      }
+    })
+    const product = await products.length > 0 ? products[0] : null;
     if (!product){
       return res.redirect('/admin/products');
     }
@@ -128,35 +118,31 @@ exports.getEditProduct = (req, res, next) => {
       editMode: req.query.editMode, // in Edit Product page
       errorMessage: ''
     })
-  })
-  .catch(err => {
+  }
+  catch (err) {
     console.log(err);
     return next(new Error(err));
-  })
-}
+  }
+};
 
-exports.postDeleteProduct = (req, res, next) => {
+exports.postDeleteProduct = async (req, res, next) => {
   const productId = req.params.productId;
-  req.user.getProducts({
-    where: {
-      id: productId,
-    }
-  })
-  .then(products => {
-    return products.length > 0 ? products[0] : null;
-  })
-  .then(product => {
+  try {
+    const products = await req.user.getProducts({
+      where: {
+        id: productId,
+      }
+    })
+    const product = products.length > 0 ? products[0] : null;
     if (!product){
-      return res.redirect('/admin/products');
+        return res.redirect('/admin/products');
     }
     deleteFile(product.imageUrl);
-    return product.destroy();
-  })
-  .then(prod => {
-    return res.status(200).json({});
-  })
-  .catch(err => {
+    product.destroy();
+    res.status(200).json({});
+  }
+  catch(err) {
     console.log(err);
     return res.status(500).json({});
-  })
+  }
 }

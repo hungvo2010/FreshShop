@@ -69,31 +69,31 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     if (!req.session.isLoggedIn){
         return next();
     }
-    User.findOne({
-        where: {
-            id: req.session.user.id,
-        }
-    })
-    .then(user => {
+    try {
+        const user = await User.findOne({
+            where: {
+                id: req.session.user.id,
+            }
+        });
         if (!user) return next();
         req.user = user;
-        return req.user.createCart()
-        .then(result => {
+        try {
+            await user.createCart();
             next();
-        })
-        .catch(err => {
+        }
+        catch (err){
             console.log(err);
             return next(new Error(err));
-        });
-    })
-    .catch(err => {
+        }
+    }
+    catch (err){
         console.log(err);
         return next(new Error(err));
-    });
+    }
 })
 
 app.use('/admin', adminRoutes);

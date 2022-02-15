@@ -5,37 +5,33 @@ const path = require('path');
 
 const ITEMS_PER_PAGE = 2;
 
-exports.getProducts = (req, res, next) => {
+exports.getProducts = async (req, res, next) => {
   const page = req.query.page || 1;
-  let totalItems = 0;
-  Product.count()
-  .then(num => {
-    totalItems = num;
+  try {
+    let totalItems = await Product.count();
     const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    Product.findAll({
+    const products = await Product.findAll({
       offset: (page - 1) * ITEMS_PER_PAGE,
       limit: ITEMS_PER_PAGE
-    })
-    .then(products => {
-      res.render('shop/product-list', {
-        prods: products,
-        pageTitle: 'All Products',
-        path: '/products',
-        currentPage: +page,
-        lastPage,
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      return next(new Error(err));
-    })
-  })
+    });
+    res.render('shop/product-list', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products',
+      currentPage: +page,
+      lastPage,
+    });
+  }
+  catch(err) {
+    console.log(err);
+    return next(new Error(err));
+  }
 };
 
-exports.getProductDetail = (req, res, next) => {
+exports.getProductDetail = async (req, res, next) => {
   const productId = req.params.productId;
-  Product.findByPk(productId)
-  .then(product => {
+  try {
+    const product = await Product.findByPk(productId);
     if (!product){
       return res.redirect('/');
     }
@@ -44,46 +40,40 @@ exports.getProductDetail = (req, res, next) => {
       pageTitle: product.title,
       path: '/products/' + product.id,
     })
-  })
-  .catch(err => {
+  }
+  catch (err){
     console.log(err);
     return next(new Error(err));
-  })
+  }
 }
 
-exports.getIndex = (req, res, next) => {
+exports.getIndex = async (req, res, next) => {
   const page = req.query.page || 1;
-  let totalItems = 0;
-  Product.count()
-  .then(num => {
-    totalItems = num;
+  try {
+    let totalItems = await Product.count();
     const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-    Product.findAll({
+    const products = await Product.findAll({
       offset: (page - 1) * ITEMS_PER_PAGE,
       limit: ITEMS_PER_PAGE
-    })
-    .then(products => {
-      res.render('shop/index', {
-        prods: products,
-        pageTitle: 'All Products',
-        path: '/products',
-        currentPage: +page,
-        lastPage,
-      });
-    })
-    .catch(err => {
-      console.log(err);
-      return next(new Error(err));
-    })
-  })
+    });
+    res.render('shop/index', {
+      prods: products,
+      pageTitle: 'All Products',
+      path: '/products',
+      currentPage: +page,
+      lastPage,
+    });
+  }
+  catch(err) {
+    console.log(err);
+    return next(new Error(err));
+  }
 };
 
-exports.getCart = (req, res, next) => {
-  req.user.getCart()
-  .then(cart => {
-    return cart.getProducts();
-  })
-  .then(products => {
+exports.getCart = async (req, res, next) => {
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
     let totalPrice = 0;
     products.forEach(prod => {
       totalPrice += prod.price * prod.CartItem.quantity;
@@ -94,126 +84,107 @@ exports.getCart = (req, res, next) => {
       pageTitle: 'Your Cart',
       totalPrice,
     })
-  })
-  .catch(err => {
+  }
+  catch (err) {
     console.log(err);
     return next(new Error(err));
-  })
+  }
 };
 
-exports.postCart = (req, res, next) => {
+exports.postCart = async (req, res, next) => {
   const productId = req.body.productId;
   let newQuantity = 1;
-  let fetchedCart;
-  req.user.getCart()
-  .then(cart => {
-    fetchedCart = cart;
-    return cart.getProducts({
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({
       where: {
         id: productId,
       }
     });
-  })
-  .then(products => {
     let product;
     if (products.length > 0){
       product = products[0];
     }
     if (product){
       newQuantity = product.CartItem.quantity + 1;
-      return product;
     }
-    return Product.findByPk(productId)
-  })
-  .then(product => {
-    return fetchedCart.addProduct(product, {
+    else {
+      product = await Product.findByPk(productId);
+    }
+    await cart.addProduct(product, {
       through: {
         quantity: newQuantity,
       }
     })
-  })
-  .then(result => {
     res.redirect('/cart');
-  })
-  .catch(err => {
+  }
+  catch (err){
     console.log(err);
     return next(new Error(err));
-  })
+  }
 }
 
-exports.deleteCart = (req, res, next) => {
+exports.deleteCart = async (req, res, next) => {
   const productId = req.body.productId;
-  req.user.getCart()
-  .then(cart => {
-    return cart.getProducts({
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts({
       where: {
         id: productId,
       }
-    })
-  })
-  .then(products => {
+    });
     if (products.length > 0){
-      return products[0].CartItem.destroy();
+      await products[0].CartItem.destroy();
     }
-  })
-  .then(result => {
-    return res.redirect('/cart');
-  })
-  .catch(err => {
+    res.redirect('/cart');
+  }
+  catch (err) {
     console.log(err);
     return next(new Error(err));
-  })
+  }
 }
 
-exports.getOrders = (req, res, next) => {
-  req.user.getOrders({
-    include: 'Products',
-  })
-  .then(orders => {
+exports.getOrders = async (req, res, next) => {
+  try {
+    const orders = await req.user.getOrders({
+      include: 'Products',
+    });
     res.render('shop/orders', {
       orders,
       pageTitle: 'Order',
       path: '/order',
     })
-  })
-  .catch(err => {
+  }
+  catch (err){
     console.log(err);
     return next(new Error(err));
-  })
+  }
 };
 
-exports.postOrders = (req, res, next) => {
-  let fetchedCart;
-  req.user.getCart()
-  .then(cart => {
-    fetchedCart = cart;
-    return cart.getProducts();
-  })
-  .then(products => {
-    return req.user.createOrder()
-    .then(order => {
+exports.postOrders = async (req, res, next) => {
+  try {
+    const cart = await req.user.getCart();
+    const products = await cart.getProducts();
+    try {
+      const order = await req.user.createOrder();
       order.addProducts(products.map(product => {
         product.OrderItem = {
           quantity: product.CartItem.quantity,
         }
         return product;
       }))
-    })
-    .catch(err => {
+    }
+    catch (err) {
       console.log(err);
       return next(new Error(err));
-    })
-  })
-  .then(result => {
-    return fetchedCart.setProducts(null);
-  })
-  .then(() => {
+    }
+    await cart.setProducts(null);
     res.redirect('/orders');
-  })
-  .catch(err => {
+  }
+  catch (err){
     console.log(err);
     return next(new Error(err));
-  })
+  }
 }
 
 exports.getCheckout = (req, res, next) => {
@@ -223,16 +194,15 @@ exports.getCheckout = (req, res, next) => {
   });
 };
 
-exports.getInvoice = (req, res, next) => {
+exports.getInvoice = async (req, res, next) => {
   const orderId = req.params.orderId;
-  req.user.getOrders({
-    where: {
-      id: orderId,
-    },
-    include: "Products",
-  })
-  .then(orders => {
-    // console.log(JSON.stringify(orders));
+  try {
+    const orders = await req.user.getOrders({
+      where: {
+        id: orderId,
+      },
+      include: "Products",
+    });
     if (orders.length == 0){
       return next(new Error("Something wrong occured"));
     }
@@ -265,6 +235,9 @@ exports.getInvoice = (req, res, next) => {
     //   }
     //   res.send(data);
     // })    
-
-  })
+  }
+  catch (err){
+    console.log(err);
+    return next(new Error(err));
+  }
 }

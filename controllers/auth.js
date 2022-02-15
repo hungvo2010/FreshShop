@@ -20,7 +20,7 @@ exports.getLogin = (req, res, next) => {
     })
 }
 
-exports.postLogin = (req, res, next) => {
+exports.postLogin = async (req, res, next) => {
     const email = req.body.email;
     const password = req.body.password;
 
@@ -37,18 +37,18 @@ exports.postLogin = (req, res, next) => {
         })
     }
 
-    User.findOne({
-        where: {
-            email,
-        }
-    })
-    .then(user => {
+    try {
+        const user = await User.findOne({
+            where: {
+                email,
+            }
+        })
         if (!user){ // user with this email not found
             req.flash('error', 'Invalid user or password');
             return res.redirect('/login');
         }
-        bcryptjs.compare(password, user.password)
-        .then(result => {
+        try {
+            const result = await bcryptjs.compare(password, user.password);
             if (result) { // matching password => login successfully
                 req.session.isLoggedIn = true;
                 req.session.user = user;
@@ -58,18 +58,17 @@ exports.postLogin = (req, res, next) => {
             }
             req.flash('error', 'Invalid user or password');
             res.redirect('/login');
-        })
-        .catch(err => {
-            console.log(err);
-            req.flash('error', 'Some error occurred, please try again later');
-            res.redirect('/login');
-        })
-    })
-    .catch(err => {
+        }
+        catch (err) {
+                console.log(err);
+                req.flash('error', 'Some error occurred, please try again later');
+                res.redirect('/login');
+            }
+    } catch(err) {
         console.log(err);
         req.flash('error', 'Some error occurred, please try again later');
         res.redirect('/login');
-    })
+    }
 }
 
 exports.getSignup = (req, res, next) => {
@@ -83,7 +82,7 @@ exports.getSignup = (req, res, next) => {
     })
 }
 
-exports.postSignup = (req, res, nexy) => {
+exports.postSignup = async (req, res, nexy) => {
     const email = req.body.email;
     const password = req.body.password;
     const retypepassword = req.body.retypepassword;
@@ -101,25 +100,22 @@ exports.postSignup = (req, res, nexy) => {
             }
         })
     }
-
-    User.findOne({
-        where: {
-            email: email,
-        }
-    })
-    .then(user => {
+    try {
+        const user = await User.findOne({
+            where: {
+                email: email,
+            }
+        })
         if (user) {
             req.flash('error', 'Email exists');
             return res.redirect('/signup');
         }
-        return bcryptjs.hash(password, 12)
-        .then(hashedPassword => {
-            return User.create({
+        try {
+            const hashedPassword = await bcryptjs.hash(password, 12);
+            await User.create({
                 email,
                 password: hashedPassword,
             })
-        })
-        .then(user => {
             res.redirect('/login');
             const mailOptions = {
                 from: process.env.USER_EMAIL,
@@ -131,18 +127,19 @@ exports.postSignup = (req, res, nexy) => {
                 err ? console.log(err) : console.log(response);
                 emailTransporter.close();
             })
-        })
-        .catch(err => {
+        }
+            
+        catch (err) {
             console.log(err);
             req.flash('error', 'Some error occurred, please try again later');
             return res.redirect('/signup');
-        })
-    })
-    .catch(err => {
+        }
+    }
+    catch (err) {
         console.log(err);
         req.flash('error', 'Some error occurred, please try again later');
         return res.redirect('/signup');
-    })
+    }
 }
 
 exports.postLogout = (req, res, next) => {
@@ -162,33 +159,33 @@ exports.getReset = (req, res, next) => {
     })
 }
 
-exports.postReset = (req, res, next) => {
+exports.postReset = async (req, res, next) => {
     const email = req.body.email;
-    User.findOne({
-        where: {
-            email,
-        }
-    })
-    .then(user => {
+    try {
+        const user = await User.findOne({
+            where: {
+                email,
+            }
+        })
         if (!user){
             req.flash('error', 'No account with your email found!');
             return res.redirect('/reset');
         }
-        crypto.randomBytes(32, (err, buffer) => {
+        crypto.randomBytes(32, async (err, buffer) => {
             if (err) {
                 console.log(err);
                 req.flash('error', 'Some errors occurred, please try again later!');
                 return res.redirect('/reset');
             }
-            req.flash('error', 'Check your inbox to reset your password.');
+            req.flash('error', 'Check your inbox to reset password.');
             res.redirect('/login');
             const token = buffer.toString("hex");
-            Token.findOne({
-                where: {
-                    userId: user.id,
-                }
-            })
-            .then(existToken => {
+            try {
+                const existToken = await Token.findOne({
+                    where: {
+                        userId: user.id,
+                    }
+                })
                 if (!existToken){
                     return Token.create({
                         userId: user.id,
@@ -196,12 +193,12 @@ exports.postReset = (req, res, next) => {
                     })
                 }
                 existToken.token = token;
-                return existToken.save();
-            })
-            .catch(err => {
+                existToken.save();
+            }
+            catch (err) {
                 console.log(err);
                 return next(new Error(err));
-            })
+            }
             const emailOptions = {
                 from: process.env.USER_EMAIL,
                 to: email,
@@ -212,24 +209,28 @@ exports.postReset = (req, res, next) => {
                 err ? console.log(err) : console.log(response);
                 emailTransporter.close();
             })
-        })
     })
 }
+    catch (err) {
+        console.log(err);
+        return next(new Error(err));
+    }
+}
 
-exports.getResetPassword = (req, res, next) => {
+exports.getResetPassword = async (req, res, next) => {
     const resetToken = req.params.resetToken;
-    Token.findOne({
-        where: {
-            token: resetToken,
-            expirationDate: {
-                [Op.gt]: Date.now()
+    try {
+        const existToken = await Token.findOne({
+            where: {
+                token: resetToken,
+                expirationDate: {
+                    [Op.gt]: Date.now()
+                }
             }
-        }
-    })
-    .then(existToken => {
+        })
         if (!existToken){
-            req.flash('error', 'Your request is not recognized or already expired');
-            return res.redirect('/login');
+                req.flash('error', 'Your request is not recognized or already expired');
+                return res.redirect('/login');
         }
         res.render('auth/new-password', {
             path: '/new-password',
@@ -237,51 +238,46 @@ exports.getResetPassword = (req, res, next) => {
             resetToken,
             userId: existToken.userId,            
         })
-    })
-    .catch(err => {
+    }
+    catch (err) {
         console.log(err);
         return next(new Error(err));
-    })
+    }
 }
 
-exports.postNewPassword = (req, res, next) => {
+exports.postNewPassword = async (req, res, next) => {
     const userId = req.body.userId;
     const resetToken = req.body.resetToken;
     const password = req.body.password;
-    Token.findOne({
-        where: {
-            token: resetToken,
-            userId,
-            expirationDate: {
-                [Op.gt]: Date.now()
+    try {
+        const existToken = await Token.findOne({
+            where: {
+                token: resetToken,
+                userId,
+                expirationDate: {
+                    [Op.gt]: Date.now()
+                }
             }
-        }
-    })
-    .then(existToken => {
+        });
         if (!existToken){
             req.flash('error', 'Your request is not recognized or already expired');
             return res.redirect('/login');
         }
-        return existToken.destroy();
-    })
-    .then(result => {
-        return User.findByPk(userId);
-    })
-    .then(user => {
-        return bcryptjs.hash(password, 12).then(hashedPassword => {
+        existToken.destroy();
+        const user = await User.findByPk(userId);
+        try {
+            const hashedPassword = await bcryptjs.hash(password, 12);
             user.password = hashedPassword;
-            user.save();
-        })
-        .catch(err => {
+            await user.save();
+            res.redirect('/login');
+        }
+        catch (err) {
             console.log(err);
             return next(new Error(err));
-        })
-    })
-    .then(result => {
-        res.redirect('/login');
-    })
-    .catch(err => {
+        }
+    }   
+    catch (err){
         console.log(err);
         return next(new Error(err));
-    })
+    }
 }
