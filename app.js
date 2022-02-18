@@ -16,6 +16,9 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
 const errorController = require('./controllers/error');
 
+const attachUser = require('./middleware/attachUser');
+const populateRender = require('./middleware/populateRender');
+
 const app = express();
 
 const csrfProtection = csrf();
@@ -63,38 +66,9 @@ app.use(session({
 app.use(csrfProtection);
 app.use(flash());
 
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn; // set this properties for all render function
-    res.locals.csrfToken = req.csrfToken();
-    next();
-})
+app.use(populateRender);
 
-app.use(async (req, res, next) => {
-    if (!req.session.isLoggedIn){
-        return next();
-    }
-    try {
-        const user = await User.findOne({
-            where: {
-                id: req.session.user.id,
-            }
-        });
-        if (!user) return next();
-        req.user = user;
-        try {
-            await user.createCart();
-            next();
-        }
-        catch (err){
-            console.log(err);
-            return next(new Error(err));
-        }
-    }
-    catch (err){
-        console.log(err);
-        return next(new Error(err));
-    }
-})
+app.use(attachUser);
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
