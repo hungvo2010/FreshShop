@@ -18,6 +18,7 @@ const errorController = require('./controllers/error');
 
 const attachUser = require('./middleware/attachUser');
 const populateRender = require('./middleware/populateRender');
+const errorHandling = require('./middleware/errorHandling');
 
 const app = express();
 
@@ -75,15 +76,7 @@ app.use(shopRoutes);
 app.use(authRoutes);
 app.use(errorController.get404);
 
-app.use(function(err, req, res, next) {
-    console.log(err);
-    res.status(500).render('500', 
-    {
-        pageTitle: '500 Page',
-        path: req.url,
-        isAuthenticated: req.session.isLoggedIn || false
-    });
-});
+app.use(errorHandling);
 
 sequelize.sync({
     // force: true
