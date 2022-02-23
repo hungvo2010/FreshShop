@@ -5,6 +5,9 @@ require('dotenv').config({path: path.join(__dirname, '.env')});
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 const sequelize = require('./util/database');
 const upload = require('./service/upload');
 const session = require('express-session');
@@ -24,6 +27,18 @@ const populateRender = require('./middleware/populateRender');
 const errorHandling = require('./middleware/errorHandling');
 
 const app = express();
+
+app.enable('trust proxy');
+
+const limiter = rateLimit({
+    max: 5000,
+    windowMs: 60 * 60 * 1000,
+    message: 'Too much requests. Please try again later'
+});
+  
+app.use(limiter);
+app.use(mongoSanitize());
+app.use(xss());
 
 const csrfProtection = csrf();
 
@@ -90,12 +105,18 @@ app.use(errorController.get404);
 
 app.use(errorHandling);
 
+let server;
+
 sequelize.sync({
     // force: true
 })
 .then(db => {
-    app.listen(process.env.PORT || 3000);
+    server = app.listen(process.env.PORT || 3000);
 })
 .catch(err => {
     console.log(err);
 })
+
+process.on('SIGTERM', () => {
+    server.close();
+});

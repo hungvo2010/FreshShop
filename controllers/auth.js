@@ -4,7 +4,7 @@ const path = require("path");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
-const emailTransporter = require('../util/emailTransporter');
+const Email = require('../util/Email');
 const { validationResult } = require('express-validator/check');
 
 require('dotenv').config({path: path.join(__dirname, '.env')});
@@ -117,16 +117,7 @@ exports.postSignup = async (req, res, nexy) => {
                 password: hashedPassword,
             })
             res.redirect('/login');
-            const mailOptions = {
-                from: process.env.USER_EMAIL,
-                to: email,
-                subject: 'Sign Up Successfully',
-                text: 'Hello! Welcome you to my page',
-            };
-            emailTransporter.sendMail(mailOptions, (err, response) => {
-                err ? console.log(err) : console.log(response);
-                emailTransporter.close();
-            })
+            new Email(email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
         }
             
         catch (err) {
