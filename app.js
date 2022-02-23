@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 const express = require('express');
@@ -9,6 +10,8 @@ const upload = require('./service/upload');
 const session = require('express-session');
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const helmet = require('helmet');
+const compression = require('compression');
 const MySQLStore = require('express-mysql-session')(session);
 
 const adminRoutes = require('./routes/admin');
@@ -51,7 +54,16 @@ Cart.belongsToMany(Product, {through: CartItem}); // m:n relationship
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-app.use(logger('dev'));
+app.use(helmet())
+app.use(compression())
+
+// loging
+const accessLogSchema = fs.createWriteStream(path.join(__dirname, 'access.log'), {
+    flags: 'a'
+});
+app.use(logger('combined', {stream: accessLogSchema}));
+
+
 app.use(upload.single('image'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
