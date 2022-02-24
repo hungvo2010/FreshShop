@@ -6,7 +6,6 @@ const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const sequelize = require('./util/database');
 const upload = require('./service/upload');
@@ -37,7 +36,6 @@ const limiter = rateLimit({
 });
   
 app.use(limiter);
-app.use(mongoSanitize());
 app.use(xss());
 
 const csrfProtection = csrf();

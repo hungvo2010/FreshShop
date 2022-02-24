@@ -1,17 +1,27 @@
 const User = require("../models/user");
 const Token = require("../models/token");
+
 const path = require("path");
 const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
 const { Op } = require("sequelize");
+
 const Email = require('../util/Email');
+const AppError = require('../util/AppError');
+
 const { validationResult } = require('express-validator/check');
 
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
-exports.getLogin = (req, res, next) => {
+function getErrorMessage(req){
     let message = req.flash('error');
-    message = message.length > 0 ? message[0] : null;
+    message = message.length > 0 ? message[0] : '';
+    return message;
+}
+
+exports.getLogin = (req, res, next) => {
+    let message = getErrorMessage(req);
+
     res.render('auth/login', {
         path: '/login',
         pageTitle: 'Login',
@@ -21,8 +31,7 @@ exports.getLogin = (req, res, next) => {
 }
 
 exports.postLogin = async (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    const {email, password} = req.body;
 
     const errors = validationResult(req);
     if (!errors.isEmpty()){
@@ -43,10 +52,12 @@ exports.postLogin = async (req, res, next) => {
                 email,
             }
         })
-        if (!user){ // user with this email not found
+
+        if (!user){
             req.flash('error', 'Invalid user or password');
             return res.redirect('/login');
         }
+
         try {
             const result = await bcryptjs.compare(password, user.password);
             if (result) { // matching password => login successfully
@@ -59,21 +70,18 @@ exports.postLogin = async (req, res, next) => {
             req.flash('error', 'Invalid user or password');
             res.redirect('/login');
         }
+
         catch (err) {
-                console.log(err);
-                req.flash('error', 'Some error occurred, please try again later');
-                res.redirect('/login');
-            }
+            return next(AppError('Some error occured.'));
+        }
     } catch(err) {
-        console.log(err);
-        req.flash('error', 'Some error occurred, please try again later');
-        res.redirect('/login');
+        return next(AppError('Some error occured.'));
     }
 }
 
 exports.getSignup = (req, res, next) => {
-    let message = req.flash('error');
-    message = message.length > 0 ? message[0] : null;
+    let message = getErrorMessage(req);
+
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
@@ -83,11 +91,10 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postSignup = async (req, res, nexy) => {
-    const email = req.body.email;
-    const password = req.body.password;
-    const retypepassword = req.body.retypepassword;
+    const {email, password, retypepassword} = req.body;
 
     const errors = validationResult(req);
+
     if (!errors.isEmpty()){
         return res.render('auth/signup', {
             path: '/signup',
@@ -100,6 +107,7 @@ exports.postSignup = async (req, res, nexy) => {
             }
         })
     }
+
     try {
         const user = await User.findOne({
             where: {
@@ -121,15 +129,12 @@ exports.postSignup = async (req, res, nexy) => {
         }
             
         catch (err) {
-            console.log(err);
-            req.flash('error', 'Some error occurred, please try again later');
-            return res.redirect('/signup');
+            return next(AppError('Some error occurred, please try again later'));
         }
     }
+
     catch (err) {
-        console.log(err);
-        req.flash('error', 'Some error occurred, please try again later');
-        return res.redirect('/signup');
+        return next(AppError('Some error occurred, please try again later'));
     }
 }
 
@@ -141,8 +146,8 @@ exports.postLogout = (req, res, next) => {
 }
 
 exports.getReset = (req, res, next) => {
-    let message = req.flash('error');
-    message = message.length > 0 ? message[0] : null;
+    let message = getErrorMessage(req);
+
     res.render('auth/reset', {
         path: '/reset',
         pageTitle: 'Reset Password',
@@ -151,25 +156,28 @@ exports.getReset = (req, res, next) => {
 }
 
 exports.postReset = async (req, res, next) => {
-    const email = req.body.email;
+    const {email} = req.body;
+
     try {
         const user = await User.findOne({
             where: {
                 email,
             }
         })
+
         if (!user){
             req.flash('error', 'No account with your email found!');
             return res.redirect('/reset');
         }
+
         crypto.randomBytes(32, async (err, buffer) => {
             if (err) {
-                console.log(err);
-                req.flash('error', 'Some errors occurred, please try again later!');
-                return res.redirect('/reset');
+                return next(new AppError(err));
             }
+
             req.flash('error', 'Check your inbox to reset password.');
             res.redirect('/login');
+
             const token = buffer.toString("hex");
             try {
                 const existToken = await Token.findOne({
@@ -187,29 +195,18 @@ exports.postReset = async (req, res, next) => {
                 existToken.save();
             }
             catch (err) {
-                console.log(err);
-                return next(new Error(err));
+                return next(new AppError(err));
             }
-            const emailOptions = {
-                from: process.env.USER_EMAIL,
-                to: email,
-                subject: 'RESET PASSWORD',
-                html: `<p>Click this <a href='${process.env.BASE_URL}reset/${token}'>link</a> to reset your password.</p>`
-            };
-            emailTransporter.sendMail(emailOptions, (err, response) => {
-                err ? console.log(err) : console.log(response);
-                emailTransporter.close();
-            })
+            new Email(email).sendPasswordReset(`<p>Click this <a href='${process.env.BASE_URL}reset/${token}'>link</a> to reset your password.</p>`);
     })
 }
     catch (err) {
-        console.log(err);
-        return next(new Error(err));
+        return next(new AppError(err));
     }
 }
 
 exports.getResetPassword = async (req, res, next) => {
-    const resetToken = req.params.resetToken;
+    const {resetToken} = req.params;
     try {
         const existToken = await Token.findOne({
             where: {
@@ -231,15 +228,13 @@ exports.getResetPassword = async (req, res, next) => {
         })
     }
     catch (err) {
-        console.log(err);
-        return next(new Error(err));
+        return next(new AppError(err));
     }
 }
 
 exports.postNewPassword = async (req, res, next) => {
-    const userId = req.body.userId;
-    const resetToken = req.body.resetToken;
-    const password = req.body.password;
+    const {userId, resetToken, password} = req.body;
+
     try {
         const existToken = await Token.findOne({
             where: {
@@ -250,25 +245,28 @@ exports.postNewPassword = async (req, res, next) => {
                 }
             }
         });
+
         if (!existToken){
             req.flash('error', 'Your request is not recognized or already expired');
             return res.redirect('/login');
         }
+
         existToken.destroy();
         const user = await User.findByPk(userId);
+
         try {
             const hashedPassword = await bcryptjs.hash(password, 12);
             user.password = hashedPassword;
             await user.save();
             res.redirect('/login');
         }
+
         catch (err) {
-            console.log(err);
-            return next(new Error(err));
+            return next(new AppError(err));
         }
     }   
+    
     catch (err){
-        console.log(err);
-        return next(new Error(err));
+        return next(new AppError(err));
     }
 }
