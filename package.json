@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/hungvo2010/mvc-sequelize#readme",
   "dependencies": {
+    "@prisma/client": "^3.10.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.1",
     "compression": "^1.7.4",
@@ -46,6 +47,7 @@
     "nodemailer": "^6.7.2",
     "nodemon": "^2.0.15",
     "pdfkit": "^0.13.0",
+    "prisma": "^3.10.0",
     "sequelize": "^6.12.4",
     "xss": "^1.0.10",
     "xss-clean": "^0.1.1"

@@ -1,5 +1,4 @@
-const User = require("../models/user");
-const Token = require("../models/token");
+const authModel = require('../models/Auth');
 
 const path = require("path");
 const bcryptjs = require("bcryptjs");
@@ -47,33 +46,19 @@ exports.postLogin = async (req, res, next) => {
     }
 
     try {
-        const user = await User.findOne({
-            where: {
-                email,
-            }
-        })
+        const fetchUser = await authModel.authenUser(body);
 
-        if (!user){
+        if (!fetchUser){
             req.flash('error', 'Invalid user or password');
             return res.redirect('/login');
         }
 
-        try {
-            const result = await bcryptjs.compare(password, user.password);
-            if (result) { // matching password => login successfully
-                req.session.isLoggedIn = true;
-                req.session.user = user;
-                return req.session.save(err => {
-                    res.redirect('/');
-                })
-            }
-            req.flash('error', 'Invalid user or password');
-            res.redirect('/login');
-        }
+        req.session.isLoggedIn = true;
+        req.session.user = fetchUser;
+        return req.session.save(err => {
+            res.redirect('/');
+        })
 
-        catch (err) {
-            return next(AppError('Some error occured.'));
-        }
     } catch(err) {
         return next(AppError('Some error occured.'));
     }
@@ -109,30 +94,16 @@ exports.postSignup = async (req, res, nexy) => {
     }
 
     try {
-        const user = await User.findOne({
-            where: {
-                email: email,
-            }
-        })
-        if (user) {
+        const newUser = authModel.createUser({email, password});
+        if (!newUser) {
             req.flash('error', 'Email exists');
             return res.redirect('/signup');
         }
-        try {
-            const hashedPassword = await bcryptjs.hash(password, 12);
-            await User.create({
-                email,
-                password: hashedPassword,
-            })
-            res.redirect('/login');
-            new Email(email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
-        }
-            
-        catch (err) {
-            return next(AppError('Some error occurred, please try again later'));
-        }
-    }
 
+        res.redirect('/login');
+        new Email(email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
+    }
+    
     catch (err) {
         return next(AppError('Some error occurred, please try again later'));
     }

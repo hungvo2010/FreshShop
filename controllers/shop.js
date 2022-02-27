@@ -164,7 +164,7 @@ exports.postOrders = async (req, res, next) => {
             const order = await req.user.createOrder();
             order.addProducts(products.map(product => {
                 product.OrderItem = {
-                quantity: product.CartItem.quantity,
+                    quantity: product.CartItem.quantity,
                 }
                 return product;
             }))

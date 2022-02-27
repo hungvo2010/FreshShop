@@ -47,23 +47,6 @@ const mysqlStore = new MySQLStore({
     database: 'session',
 })
 
-const Product = require('./models/product');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cartItem');
-const Order = require('./models/order');
-const OrderItem = require('./models/orderItem');
-const User = require('./models/user');
-
-Product.belongsTo(User); // foreign key place in SOURCE models 1:1 relationship
-User.hasMany(Product); // foreign key place in TARGET model, 1:n relationship
-User.hasOne(Cart); // 1:1 TARGET models
-User.hasMany(Order); // 1:n
-Order.belongsTo(User); // n:1
-Product.belongsToMany(Order, {through: OrderItem}); // m:n relationship
-Order.belongsToMany(Product, {through: OrderItem}); // m:n relationship
-Product.belongsToMany(Cart, {through: CartItem}); // m:n relationship
-Cart.belongsToMany(Product, {through: CartItem}); // m:n relationship
-
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
