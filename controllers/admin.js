@@ -1,5 +1,4 @@
 const deleteFile = require('../util/deleteFile');
-const AppError = require('../util/AppError');
 const adminModel = require('../models/Admin');
 
 const ITEMS_PER_PAGE = 2; 
@@ -38,12 +37,13 @@ exports.postAddProduct = async (req, res, next) => {
 	}
 
 	catch (err) {
-		return next(new AppError(err));
+		return next(err);
 	}
 };
 
 exports.getProducts = async (req, res, next) => {
-    const page = req.query.page || Math.max(1, +page);
+    let page = req.query.page || 1;
+	page = Math.max(1, page);
 
     try {
         const totalItems = await adminModel.countAdminProducts();
@@ -60,7 +60,7 @@ exports.getProducts = async (req, res, next) => {
     }
 
     catch (err) {
-        return next(new AppError(err));
+        return next(err);
     }
 };
 
@@ -88,7 +88,7 @@ exports.postEditProduct = async (req, res, next) => {
 	}
 
 	catch (err){
-		return next(new AppError(err));
+		return next(err);
 	}
 }
 
@@ -110,7 +110,7 @@ exports.getEditProduct = async (req, res, next) => {
 	}
 
 	catch (err) {
-		return next(new AppError(err));
+		return next(err);
 	}
 };
 
@@ -129,6 +129,6 @@ exports.postDeleteProduct = async (req, res, next) => {
 	}
 	
 	catch(err) {
-		return next(new AppError(err));
+		return next(err);
 	}
 }

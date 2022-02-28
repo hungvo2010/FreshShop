@@ -1,6 +1,7 @@
 const session = require('express-session');
+const path = require('path');
 
-require('dotenv').config({path: path.join(__dirname, '.env')});
+require('dotenv').config({path: path.join(__dirname, '..', '.env')});
 
 const MySQLStore = require('express-mysql-session')(session);
 const mysqlStore = new MySQLStore({

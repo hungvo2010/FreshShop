@@ -1,13 +1,14 @@
-const Product = require('../models/product');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
+
 const shopModel = require('../models/Shop');
 
 const ITEMS_PER_PAGE = 2;
 
 exports.getProducts = async (req, res, next) => {
-    const page = req.query.page || Math.max(1, +page);
+    let page = req.query.page || 1;
+	page = Math.max(1, page);
 
     try {
         let totalItems = await shopModel.countProducts();
@@ -24,7 +25,7 @@ exports.getProducts = async (req, res, next) => {
     }
 
     catch(err) {
-        return next(new AppError(err));
+        return next(err);
     }
 };
 
@@ -44,12 +45,13 @@ exports.getProductDetail = async (req, res, next) => {
     }
 
     catch (err){
-        return next(new AppError(err));
+        return next(err);
     }
 }
 
 exports.getIndex = async (req, res, next) => {
-    const page = req.query.page || Math.max(1, +page);
+    let page = req.query.page || 1;
+	page = Math.max(1, page);
     
     try {
         let totalItems = await shopModel.countProducts();
@@ -66,7 +68,7 @@ exports.getIndex = async (req, res, next) => {
     }
 
     catch(err) {
-        return next(new AppError(err));
+        return next(err);
     }
 };
 
@@ -80,7 +82,7 @@ exports.getCart = async (req, res, next) => {
         //     totalPrice += prod.price * prod.CartItem.quantity;
         // })
         res.render('shop/cart', {
-            products = [],
+            products: [],
             path: '/cart',
             pageTitle: 'Your Cart',
             totalPrice,
@@ -88,7 +90,7 @@ exports.getCart = async (req, res, next) => {
     }
 
     catch (err) {
-        return next(new AppError(err));
+        return next(err);
     }
 };
 

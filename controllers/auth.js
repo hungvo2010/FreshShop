@@ -4,7 +4,6 @@ const path = require("path");
 const crypto = require("crypto");
 
 const Email = require('../util/Email');
-const AppError = require('../util/AppError');
 const getRootUrl = require('../util/getRootUrl');
 
 const { validationResult } = require('express-validator/check');
@@ -43,7 +42,7 @@ exports.postLogin = async (req, res, next) => {
     }
 
     try {
-        const fetchUser = await authModel.authenUser(body);
+        const fetchUser = await authModel.authenUser({email, password});
 
         if (!fetchUser){
             req.flash('error', 'Invalid user or password');
@@ -57,7 +56,7 @@ exports.postLogin = async (req, res, next) => {
         })
 
     } catch(err) {
-        return next(AppError('Some error occured.'));
+        return next(err);
     }
 }
 
@@ -102,7 +101,7 @@ exports.postSignup = async (req, res, nexy) => {
     }
     
     catch (err) {
-        return next(AppError('Some error occurred, please try again later'));
+        return next(err);
     }
 }
 
@@ -147,14 +146,14 @@ exports.postReset = async (req, res, next) => {
                 authModel.saveToken(token, user.id);
             }
             catch (err) {
-                return next(new AppError(err));
+                return next(err);
             }
             new Email(email).sendPasswordReset(`<p>Click this <a href='${getRootUrl()}reset/${token}'>link</a> to reset your password.</p>`);
         })
     }
 
     catch (err) {
-        return next(new AppError(err));
+        return next(err);
     }
 }
 
@@ -177,7 +176,7 @@ exports.getResetPassword = async (req, res, next) => {
     }
 
     catch (err) {
-        return next(new AppError(err));
+        return next(err);
     }
 }
 
@@ -199,6 +198,6 @@ exports.postNewPassword = async (req, res, next) => {
     }   
     
     catch (err){
-        return next(new AppError(err));
+        return next(err);
     }
 }

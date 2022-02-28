@@ -1,5 +1,5 @@
 const bodyParser = require('body-parser');
-const upload = require('./service/upload');
+const upload = require('../service/upload');
 
 module.exports = app => {
     app.use(upload.single('image'));

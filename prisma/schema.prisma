@@ -18,6 +18,7 @@ model User {
   token Token?
   cart Cart?
   order Order[]
+  @@map("user")
 }
 
 model Product {
@@ -30,6 +31,7 @@ model Product {
   description   String
   cartItem CartItem[]
   orderItem OrderItem[]
+  @@map("product")
 }
 
 model Token {
@@ -38,6 +40,7 @@ model Token {
   token String
   expireIn DateTime
   @@id([userId])
+  @@map("token")
 }
 
 model Cart {
@@ -45,6 +48,7 @@ model Cart {
   user User @relation(fields: [userId], references: [id])
   userId Int
   cartItem CartItem[]
+  @@map("cart")
 }
 
 model Order {
@@ -52,6 +56,7 @@ model Order {
   orderItem OrderItem[]
   user User @relation(fields: [userId], references: [id])
   userId Int
+  @@map("order")
 }
 
 model CartItem {
@@ -61,6 +66,7 @@ model CartItem {
   cart Cart @relation(fields: [cartId], references: [id])
   cartId Int
   @@id([productId, cartId])
+  @@map("cartitem")
 }
 
 model OrderItem {
@@ -70,5 +76,6 @@ model OrderItem {
   order Order @relation(fields: [orderId], references: [id])
   orderId Int
   @@id([productId, orderId])
+  @@map("orderitem")
 }
 
