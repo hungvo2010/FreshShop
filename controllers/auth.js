@@ -1,16 +1,13 @@
 const authModel = require('../models/Auth');
 
 const path = require("path");
-const bcryptjs = require("bcryptjs");
 const crypto = require("crypto");
-const { Op } = require("sequelize");
 
 const Email = require('../util/Email');
 const AppError = require('../util/AppError');
+const getRootUrl = require('../util/getRootUrl');
 
 const { validationResult } = require('express-validator/check');
-
-require('dotenv').config({path: path.join(__dirname, '.env')});
 
 function getErrorMessage(req){
     let message = req.flash('error');
@@ -152,7 +149,7 @@ exports.postReset = async (req, res, next) => {
             catch (err) {
                 return next(new AppError(err));
             }
-            new Email(email).sendPasswordReset(`<p>Click this <a href='${process.env.BASE_URL}reset/${token}'>link</a> to reset your password.</p>`);
+            new Email(email).sendPasswordReset(`<p>Click this <a href='${getRootUrl()}reset/${token}'>link</a> to reset your password.</p>`);
         })
     }
 
