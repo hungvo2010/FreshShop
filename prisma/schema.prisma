@@ -15,6 +15,7 @@ model User {
   email   String @unique
   password  String
   products Product[]
+  token Token?
   cart Cart?
   order Order[]
 }
@@ -27,8 +28,16 @@ model Product {
   imageUrl  String
   price   Float
   description   String
-  cartItem CartItem?
-  orderItem OrderItem?
+  cartItem CartItem[]
+  orderItem OrderItem[]
+}
+
+model Token {
+  user User @relation(fields: [userId], references: [id])
+  userId Int
+  token String
+  expireIn DateTime
+  @@id([userId])
 }
 
 model Cart {

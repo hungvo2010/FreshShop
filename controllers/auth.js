@@ -94,7 +94,7 @@ exports.postSignup = async (req, res, nexy) => {
     }
 
     try {
-        const newUser = authModel.createUser({email, password});
+        const newUser = authModel.upsertUser({email, password});
         if (!newUser) {
             req.flash('error', 'Email exists');
             return res.redirect('/signup');
@@ -130,11 +130,7 @@ exports.postReset = async (req, res, next) => {
     const {email} = req.body;
 
     try {
-        const user = await User.findOne({
-            where: {
-                email,
-            }
-        })
+        const user = await authModel.findUser(email);
 
         if (!user){
             req.flash('error', 'No account with your email found!');
@@ -151,26 +147,15 @@ exports.postReset = async (req, res, next) => {
 
             const token = buffer.toString("hex");
             try {
-                const existToken = await Token.findOne({
-                    where: {
-                        userId: user.id,
-                    }
-                })
-                if (!existToken){
-                    return Token.create({
-                        userId: user.id,
-                        token,
-                    })
-                }
-                existToken.token = token;
-                existToken.save();
+                authModel.saveToken(token, user.id);
             }
             catch (err) {
                 return next(new AppError(err));
             }
             new Email(email).sendPasswordReset(`<p>Click this <a href='${process.env.BASE_URL}reset/${token}'>link</a> to reset your password.</p>`);
-    })
-}
+        })
+    }
+
     catch (err) {
         return next(new AppError(err));
     }
@@ -179,18 +164,13 @@ exports.postReset = async (req, res, next) => {
 exports.getResetPassword = async (req, res, next) => {
     const {resetToken} = req.params;
     try {
-        const existToken = await Token.findOne({
-            where: {
-                token: resetToken,
-                expirationDate: {
-                    [Op.gt]: Date.now()
-                }
-            }
-        })
+        const existToken = await authModel.findToken(resetToken);
+
         if (!existToken){
                 req.flash('error', 'Your request is not recognized or already expired');
                 return res.redirect('/login');
         }
+
         res.render('auth/new-password', {
             path: '/new-password',
             pageTitle: 'New Password',
@@ -198,6 +178,7 @@ exports.getResetPassword = async (req, res, next) => {
             userId: existToken.userId,            
         })
     }
+
     catch (err) {
         return next(new AppError(err));
     }
@@ -207,34 +188,17 @@ exports.postNewPassword = async (req, res, next) => {
     const {userId, resetToken, password} = req.body;
 
     try {
-        const existToken = await Token.findOne({
-            where: {
-                token: resetToken,
-                userId,
-                expirationDate: {
-                    [Op.gt]: Date.now()
-                }
-            }
-        });
+        const existToken = await authModel.findToken(resetToken);
 
         if (!existToken){
             req.flash('error', 'Your request is not recognized or already expired');
             return res.redirect('/login');
         }
 
-        existToken.destroy();
-        const user = await User.findByPk(userId);
-
-        try {
-            const hashedPassword = await bcryptjs.hash(password, 12);
-            user.password = hashedPassword;
-            await user.save();
-            res.redirect('/login');
-        }
-
-        catch (err) {
-            return next(new AppError(err));
-        }
+        authModel.deleteToken(userId, resetToken);
+        const user = await authModel.findUser(+userId);
+        await authModel.upsertUser(user.email, password);
+        res.redirect('/login');
     }   
     
     catch (err){

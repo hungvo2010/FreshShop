@@ -20,7 +20,7 @@ async function authenUser({email, password}){
     }
 }
 
-async function createUser({email, password}){
+async function upsertUser({email, password}){
     let user = await prisma.user.findFirst({
         where: {
             email,
@@ -32,14 +32,87 @@ async function createUser({email, password}){
     }
 
     const hashedPassword = await bcryptjs.hash(password, 12);
-    user = await prisma.user.create({
-        email,
-        password: hashedPassword,
+    user = prisma.user.upsert({
+        where: {
+            email,
+        },
+        update: {
+            email,
+            password: hashedPassword
+        },
+        create: {
+            email,
+            password: hashedPassword
+        }
     })
+
     return user;
+}
+
+async function findUser(term){
+    let condition;
+    if (typeof term === 'string'){
+        condition = {
+            where: {
+                email: term,
+            }
+        }
+    }
+    else {
+        condition = {
+            where: {
+                id: term
+            }
+        }
+    }
+    const user = await prisma.user.findFirst(condition);
+
+    return user;
+}
+
+async function saveToken(token, id){
+    prisma.token.upsert({
+        where: {
+            userId: id
+        },
+        update: {
+            token,
+            expireIn: new Date(Date.now() + 600000)
+        },
+        create: {
+            userId: id,
+            token,
+            expireIn: new Date(Date.now() + 600000)
+        }
+    });
+}
+
+async function findToken(resetToken){
+    const existToken = await prisma.token.findFirst({
+        where: {
+            token: resetToken,
+            expirationDate: {
+                gt: Date.now()
+            }
+        }
+    })
+    return existToken;
+}
+
+async function deleteToken(userId, resetToken){
+    prisma.token.delete({
+        where: {
+            userId,
+            token: resetToken
+        }
+    })
 }
 
 module.exports = {
     authenUser,
-    createUser,
+    upsertUser,
+    findUser,
+    saveToken,
+    findToken,
+    deleteToken,
 }
