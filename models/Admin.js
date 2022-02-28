@@ -4,7 +4,15 @@ const bcryptjs = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function createProduct(product){
-    await prisma.product.create(product);
+    await prisma.product.create({
+        data: product
+    });
+}
+
+async function createMultipleProducts(products){
+    await prisma.product.createMany({
+        data: products
+    })
 }
 
 async function countAdminProducts(userId){
@@ -18,7 +26,7 @@ async function countAdminProducts(userId){
 async function getAdminProducts(userId, offset, limit){
     return await prisma.product.findMany({
         skip: offset,
-        first: limit,
+        take: limit,
         where: {
             userId,
         }
@@ -53,6 +61,7 @@ async function deleteProduct(productId){
 
 module.exports = {
     createProduct,
+    createMultipleProducts,
     countAdminProducts,
     findProduct,
     getAdminProducts,

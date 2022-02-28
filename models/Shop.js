@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function getProducts(offset, limit){
     return await prisma.product.findMany({
         skip: offset,
-        first: limit
+        take: limit
     })
 }
 

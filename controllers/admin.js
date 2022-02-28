@@ -29,7 +29,7 @@ exports.postAddProduct = async (req, res, next) => {
 		await adminModel.createProduct({
 			title,
 			imageUrl: image.path,
-			price,
+			price: parseFloat(price),
 			description,
 			userId: req.user.id,
 		});

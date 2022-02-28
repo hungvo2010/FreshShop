@@ -42,7 +42,7 @@ exports.postLogin = async (req, res, next) => {
     }
 
     try {
-        const fetchUser = await authModel.authenUser({email, password});
+        const fetchUser = await authModel.authenUser(req.body);
 
         if (!fetchUser){
             req.flash('error', 'Invalid user or password');

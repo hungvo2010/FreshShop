@@ -1,7 +1,7 @@
 const authModel = require('../models/Auth');
 
 module.exports = async (req, res, next) => {
-    if (req.session && !req.session.isLoggedIn){
+    if (!req.session.isLoggedIn){
         return next();
     }
     
@@ -9,10 +9,10 @@ module.exports = async (req, res, next) => {
         const user = await authModel.findUser(req.session.user.id);
         if (!user) return next();
         req.user = user;
+        next();
     }
     
     catch (err){
-        console.log(err);
-        return next(new Error(err));
+        return next(err);
     }
 }
