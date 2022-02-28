@@ -12,19 +12,7 @@ router.get('/login', authController.getLogin);
 
 // /login => POST
 router.post('/login', [
-    body('email').isEmail().withMessage('Your email is in invalid format')
-    .custom((value, {req}) => {
-        return User.findOne({
-            where: {
-                email: req.body.email,
-            }
-        })
-        .then(user => {
-            if (!user){
-                return Promise.reject('No account with this email found');
-            }
-        })
-    }),
+    body('email').isEmail().withMessage('Your email is in invalid format'),
     body('password').trim().not().isEmpty().withMessage('Your password is empty')
 ], authController.postLogin);
 

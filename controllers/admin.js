@@ -1,5 +1,6 @@
 const deleteFile = require('../util/deleteFile');
 const AppError = require('../util/AppError');
+const adminModel = require('../models/Admin');
 
 const ITEMS_PER_PAGE = 2; 
 
@@ -26,11 +27,12 @@ exports.postAddProduct = async (req, res, next) => {
 	}
 
 	try {
-		await req.user.createProduct({
+		await adminModel.createProduct({
 			title,
 			imageUrl: image.path,
 			price,
 			description,
+			userId: req.user.id,
 		});
 		res.redirect('/admin/products');
 	}
@@ -41,15 +43,12 @@ exports.postAddProduct = async (req, res, next) => {
 };
 
 exports.getProducts = async (req, res, next) => {
-    const page = req.query.page || 1;
+    const page = req.query.page || Math.max(1, +page);
 
     try {
-        const totalItems = await req.user.countProducts();
+        const totalItems = await adminModel.countAdminProducts();
         const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        const products = await req.user.getProducts({
-        	limit: ITEMS_PER_PAGE,
-        	offset: (page - 1) * ITEMS_PER_PAGE
-        });
+        const products = await adminModel.getAdminProducts(req.user.id, (page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
 
         res.render('admin/products', {
 			prods: products,
@@ -59,6 +58,7 @@ exports.getProducts = async (req, res, next) => {
 			lastPage
         });
     }
+
     catch (err) {
         return next(new AppError(err));
     }
@@ -70,43 +70,36 @@ exports.postEditProduct = async (req, res, next) => {
 	const {productId, newTitle, newPrice, newDescription} = req.body;
 
 	try {
-		let products = await req.user.getProducts({
-			where: {
-				id: productId,
-			}
-		});
-		let product = products.length > 0 ? products[0] : null;
+		let product = await adminModel.findProduct(productId, req.user.id);
 		if (!product){
 			return res.redirect('/admin/products');
 		}
-		product.title = newTitle;
+		const newProduct = {
+			title: newTitle,
+		}
 		if (newImage){
 			deleteFile(product.imageUrl);
-			product.imageUrl = newImage.path;      
+			newProduct.imageUrl = newImage.path;      
 		}
-		product.price = newPrice;
-		product.description = newDescription;
-		await product.save();
+		newProduct.price = newPrice;
+		newProduct.description = newDescription;
+		await adminModel.updateProduct(productId, newProduct);
 		res.redirect('/admin/products');
 	}
+
 	catch (err){
-		console.log(err);
-		return next(new Error(err));
+		return next(new AppError(err));
 	}
 }
 
 exports.getEditProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 	try {
-		const products = await req.user.getProducts({
-		where: {
-			id: productId,
-		}
-		})
-		const product = await products.length > 0 ? products[0] : null;
+		const product = await adminModel.findProduct(productId, req.user.id);
 		if (!product){
-		return res.redirect('/admin/products');
+			return res.redirect('/admin/products');
 		}
+
 		res.render("admin/edit-product", {
 			product,
 			pageTitle: 'Edit Product',
@@ -115,6 +108,7 @@ exports.getEditProduct = async (req, res, next) => {
 			errorMessage: ''
 		})
 	}
+
 	catch (err) {
 		return next(new AppError(err));
 	}
@@ -123,19 +117,17 @@ exports.getEditProduct = async (req, res, next) => {
 exports.postDeleteProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 	try {
-		const products = await req.user.getProducts({
-		where: {
-			id: productId,
-		}
-		})
-		const product = products.length > 0 ? products[0] : null;
+		const product = await adminModel.findProduct(productId, req.user.id);
+		
 		if (!product){
 			return res.redirect('/admin/products');
 		}
+		
 		deleteFile(product.imageUrl);
-		product.destroy();
+		adminModel.deleteProduct(productId);
 		res.status(200).json({});
 	}
+	
 	catch(err) {
 		return next(new AppError(err));
 	}
