@@ -82,9 +82,15 @@ exports.getCart = async (req, res, next) => {
             cartInfo.cartItem.forEach(prod => {
                 totalPrice += prod.quantity * prod.product.price;
             })
+            return res.render('shop/cart', {
+                products: cartInfo.cartItem,
+                path: '/cart',
+                pageTitle: 'Your Cart',
+                totalPrice,
+            })
         }
-        res.render('shop/cart', {
-            products: cartInfo.cartItem,
+        return res.render('shop/cart', {
+            products: [],
             path: '/cart',
             pageTitle: 'Your Cart',
             totalPrice,

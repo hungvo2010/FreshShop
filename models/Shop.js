@@ -114,6 +114,11 @@ async function addOrder(userId){
                 data: newItem,
             })
         }
+        await prisma.cartItem.deleteMany({
+            where: {
+                cartId: cart.id,
+            }
+        })
     }
 }
 
