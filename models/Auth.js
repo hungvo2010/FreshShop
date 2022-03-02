@@ -20,10 +20,13 @@ async function authenUser({email, password}){
     }
 }
 
-async function upsertUser({email, password}){
+async function upsertUser({id, email, password}){
     let user = await prisma.user.findFirst({
         where: {
-            email,
+            OR: [
+                {email: email},
+                {id: id}
+            ]
         }
     });
 
@@ -34,13 +37,17 @@ async function upsertUser({email, password}){
     const hashedPassword = await bcryptjs.hash(password, 12);
     user = prisma.user.upsert({
         where: {
+            // OR: [
+            //     {email: email},
+            //     {id: id}
+            // ]
             email,
         },
         update: {
-            email,
             password: hashedPassword
         },
         create: {
+            id,
             email,
             password: hashedPassword
         }

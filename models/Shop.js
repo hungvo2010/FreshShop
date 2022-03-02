@@ -26,11 +26,107 @@ async function getProductsOfCart(userId){
         include: {
             cartItem: {
                 include: {
-                    product: true
+                    product: true,
                 }
             }
         }
     })
+}
+
+async function getCart(userId){
+    return await prisma.cart.upsert({
+        where: {
+            userId,
+        },
+        update: {},
+        create: {
+            userId,
+        }
+    });
+}
+
+async function deleteCartItem(productId, userId){
+    let cart = await getCart(userId);
+    
+    await prisma.cartItem.delete({
+        where: {
+            productId_cartId: {
+                productId,
+                cartId: cart.id,
+            }
+        }
+    })
+}
+
+async function addProductToCart(productId, userId){
+    let cart = await getCart(userId);
+
+    await prisma.cartItem.upsert({
+        where: {
+            productId_cartId: {
+                productId,
+                cartId: cart.id,
+            }
+        },
+        update: {
+            quantity: {
+                increment: 1
+            }
+        },
+        create: {
+            cartId: cart.id,
+            productId,
+            quantity: 1
+        }
+    })
+}
+
+async function getListOfOrders(userId){
+    return await prisma.order.findMany({
+        where: {
+            userId,
+        },
+        include: {
+            orderItem: {
+                include: {
+                    product: true,
+                }
+            }
+        }
+    })
+}
+
+async function addOrder(userId){
+    const order = await prisma.order.create({
+        data: {
+            userId
+        }
+    });
+    const cart = await getProductsOfCart(userId);
+    if (cart && cart.cartItem){
+        for (let item of cart.cartItem){
+            const newItem = {
+                orderId: order.id,
+                productId: item.productId,
+                quantity: item.quantity
+            }
+            await prisma.orderItem.create({
+                data: newItem,
+            })
+        }
+    }
+}
+
+async function getSpecificOrder(orderId){
+    const order = await prisma.orderItem.findMany({
+        where: {
+            orderId
+        },
+        include: {
+            product: true
+        }
+    });
+    return order;
 }
 
 async function countProducts(){
@@ -41,6 +137,11 @@ module.exports = {
     getProducts,
     findProduct,
     countProducts,
-    getProductsOfCart
+    addProductToCart,
+    getProductsOfCart,
+    deleteCartItem,
+    getListOfOrders,
+    addOrder,
+    getSpecificOrder,
 }
 

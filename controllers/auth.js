@@ -71,7 +71,7 @@ exports.getSignup = (req, res, next) => {
     })
 }
 
-exports.postSignup = async (req, res, nexy) => {
+exports.postSignup = async (req, res, next) => {
     const {email, password, retypepassword} = req.body;
 
     const errors = validationResult(req);
@@ -90,7 +90,7 @@ exports.postSignup = async (req, res, nexy) => {
     }
 
     try {
-        const newUser = authModel.upsertUser({email, password});
+        const newUser = authModel.upsertUser({id: -1, email, password});
         if (!newUser) {
             req.flash('error', 'Email exists');
             return res.redirect('/signup');

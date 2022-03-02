@@ -1,5 +1,6 @@
 <%- include('../includes/head.ejs') %>
     <link rel="stylesheet" href="/css/product.css">
+    <script src="/js/product.js" defer></script>
     </head>
 
     <body>
@@ -30,7 +31,7 @@
                                     <a href="/admin/edit-product/<%= product.id%>?editMode=true" class="btn">Edit</a>
                                     <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                                     <input type="hidden" value="<%= product.id %>" name="productId">
-                                    <button class="btn" onclick="deleteProduct(this)">Delete</button>
+                                    <button class="btn">Delete</button>
                                 </div>
                             </article>
                             <% } %>
@@ -44,4 +45,4 @@
                         <% } %>
             </main>
             <%- include('../includes/end.ejs') %>
-            <script src="/js/product.js"></script>
+            

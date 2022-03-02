@@ -18,7 +18,7 @@ async function createMultipleProducts(products){
 async function countAdminProducts(userId){
     return prisma.product.count({
         where: {
-            userId
+            userId: userId
         }
     })
 }
@@ -47,7 +47,7 @@ async function updateProduct(productId, newProduct){
         where: {
             id: productId
         },
-        update: newProduct
+        data: newProduct
     })
 }
 

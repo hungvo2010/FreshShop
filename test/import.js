@@ -3,30 +3,34 @@ const fs = require('fs');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-let products;
-let users;
+const util = require('util');
+const model = require('../models/Auth');
+let readFile = util.promisify(fs.readFile);
 
-fs.readFile('product.json', (err, data) => {
-    products = JSON.parse(data);
-})
+async function importUser() {
+    let users = await readFile('user.json');
+    users = JSON.parse(users);
+    for (let user of users){
+        await model.upsertUser(user);
+    }
+}
 
-fs.readFile('user.json', (err, data) => {
-    users = JSON.parse(data);
-})
-
-const importData = async () => {
+async function importProduct(){
+    let products = await readFile('product.json');
+    products = JSON.parse(products);
     await prisma.product.createMany({
         data: products
-    });
-    await prisma.user.createMany({
-        data: users
     })
+}
+
+const importData = async () => {
+    await importUser();
+    // await importProduct();
 };
 
 const deleteData = async () => {
-    console.log(prisma.cartitem);
-    // prisma.cartitem.deleteMany({});
-    // prisma.orderitem.deleteMany({});
+    await prisma.cartItem.deleteMany({});
+    await prisma.orderItem.deleteMany({});
     await prisma.order.deleteMany({});
     await prisma.cart.deleteMany({});
     await prisma.product.deleteMany({});
