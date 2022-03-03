@@ -30,18 +30,19 @@ async function upsertUser({id, email, password}){
         }
     });
 
-    if (user){
-        return null;
-    }
+    // if (user){
+    //     console.log("reach here");
+    //     return null;
+    // }
 
     const hashedPassword = await bcryptjs.hash(password, 12);
-    user = prisma.user.upsert({
+    user = await prisma.user.upsert({
         where: {
-            // OR: [
-            //     {email: email},
-            //     {id: id}
-            // ]
-            email,
+            OR: [
+                {email: email},
+                {id: id}
+            ]
+            // email,
         },
         update: {
             password: hashedPassword
@@ -78,7 +79,7 @@ async function findUser(term){
 }
 
 async function saveToken(token, id){
-    prisma.token.upsert({
+    await prisma.token.upsert({
         where: {
             userId: id
         },
@@ -98,19 +99,18 @@ async function findToken(resetToken){
     const existToken = await prisma.token.findFirst({
         where: {
             token: resetToken,
-            expirationDate: {
-                gt: Date.now()
+            expireIn: {
+                gt: new Date()
             }
         }
     })
     return existToken;
 }
 
-async function deleteToken(userId, resetToken){
-    prisma.token.delete({
+async function deleteToken(userId){
+    await prisma.token.delete({
         where: {
             userId,
-            token: resetToken
         }
     })
 }

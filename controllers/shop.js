@@ -1,8 +1,9 @@
 const populateInvoice = require('../util/populateInvoice');
+const getItemsPerPage = require('../util/ItemsPerPage');
 
 const shopModel = require('../models/Shop');
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = getItemsPerPage();
 
 function getQueryPage(req){
     let page = req.query.page || 1;
@@ -78,6 +79,7 @@ exports.getCart = async (req, res, next) => {
     try {
         const cartInfo = await shopModel.getProductsOfCart(req.user.id);
         let totalPrice = 0;
+
         if (cartInfo && cartInfo.cartItem){
             cartInfo.cartItem.forEach(prod => {
                 totalPrice += prod.quantity * prod.product.price;
@@ -89,6 +91,7 @@ exports.getCart = async (req, res, next) => {
                 totalPrice,
             })
         }
+
         return res.render('shop/cart', {
             products: [],
             path: '/cart',
@@ -104,28 +107,52 @@ exports.getCart = async (req, res, next) => {
 
 exports.postCart = async (req, res, next) => {
     const productId = req.body.productId;
-    await shopModel.addProductToCart(+productId, req.user.id);
-    res.redirect('/cart');
+    try {
+        await shopModel.addProductToCart(+productId, req.user.id);
+        res.redirect('/cart');
+    }
+
+    catch (err) {
+        return next(err);
+    }
 }
 
 exports.deleteCart = async (req, res, next) => {
     const productId = req.body.productId;
-    await shopModel.deleteCartItem(+productId, req.user.id);
-    res.redirect('/cart');
+    try {
+        await shopModel.deleteCartItem(+productId, req.user.id);
+        res.redirect('/cart');
+    }
+
+    catch (err) {
+        return next(err);
+    }
 }
 
 exports.getOrders = async (req, res, next) => {
-    const orders = await shopModel.getListOfOrders(req.user.id);
-    res.render('shop/orders', {
-        orders,
-        pageTitle: 'Order',
-        path: '/order',
-    })
+    try {
+        const orders = await shopModel.getListOfOrders(req.user.id);
+        res.render('shop/orders', {
+            orders,
+            pageTitle: 'Order',
+            path: '/order',
+        })
+    }
+
+    catch (err) {
+        return next(err);
+    }
 };
 
 exports.postOrders = async (req, res, next) => {
-    await shopModel.addOrder(req.user.id);
-    res.redirect('/orders');
+    try {
+        await shopModel.addOrder(req.user.id);
+        res.redirect('/orders');
+    }
+
+    catch (err) {
+        return next(err);
+    }
 }
 
 exports.getCheckout = (req, res, next) => {
@@ -137,12 +164,18 @@ exports.getCheckout = (req, res, next) => {
 
 exports.getInvoice = async (req, res, next) => {
     const orderId = req.params.orderId;
-    const productList = await shopModel.getSpecificOrder(+orderId);
-    const pdfDoc = populateInvoice(productList, orderId);
+    try {
+        const productList = await shopModel.getSpecificOrder(+orderId);
+        const pdfDoc = populateInvoice(productList, orderId);
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=' + 'invoice-' + orderId);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename=' + 'invoice-' + orderId);
 
-    pdfDoc.pipe(res);
-    pdfDoc.end();
-}   
+        pdfDoc.pipe(res);
+        pdfDoc.end();
+    }
+
+    catch (err) {
+        return next(err);
+    }
+}

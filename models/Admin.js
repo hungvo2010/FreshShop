@@ -1,6 +1,4 @@
-const {PrismaClient} = require('@prisma/client');
-const bcryptjs = require('bcryptjs');
-
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 async function createProduct(product){

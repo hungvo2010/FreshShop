@@ -1,6 +1,5 @@
 const authModel = require('../models/Auth');
 
-const path = require("path");
 const crypto = require("crypto");
 
 const Email = require('../util/Email');
@@ -55,7 +54,9 @@ exports.postLogin = async (req, res, next) => {
             res.redirect('/');
         })
 
-    } catch(err) {
+    } 
+    
+    catch(err) {
         return next(err);
     }
 }
@@ -90,7 +91,7 @@ exports.postSignup = async (req, res, next) => {
     }
 
     try {
-        const newUser = authModel.upsertUser({id: -1, email, password});
+        const newUser = await authModel.upsertUser({id: -1, email, password});
         if (!newUser) {
             req.flash('error', 'Email exists');
             return res.redirect('/signup');
@@ -107,7 +108,9 @@ exports.postSignup = async (req, res, next) => {
 
 exports.postLogout = (req, res, next) => {
     req.session.destroy(err => {
-        console.log(err);
+        if (err) {
+            console.log(err);
+        }
         res.redirect('/');
     })
 }
@@ -135,7 +138,7 @@ exports.postReset = async (req, res, next) => {
 
         crypto.randomBytes(32, async (err, buffer) => {
             if (err) {
-                return next(new AppError(err));
+                return next(err);
             }
 
             req.flash('error', 'Check your inbox to reset password.');
@@ -145,6 +148,7 @@ exports.postReset = async (req, res, next) => {
             try {
                 authModel.saveToken(token, user.id);
             }
+
             catch (err) {
                 return next(err);
             }
@@ -158,13 +162,14 @@ exports.postReset = async (req, res, next) => {
 }
 
 exports.getResetPassword = async (req, res, next) => {
-    const {resetToken} = req.params;
+    const { resetToken } = req.params;
+
     try {
         const existToken = await authModel.findToken(resetToken);
 
         if (!existToken){
-                req.flash('error', 'Your request is not recognized or already expired');
-                return res.redirect('/login');
+            req.flash('error', 'Your request is not recognized or already expired');
+            return res.redirect('/login');
         }
 
         res.render('auth/new-password', {
@@ -191,9 +196,9 @@ exports.postNewPassword = async (req, res, next) => {
             return res.redirect('/login');
         }
 
-        authModel.deleteToken(userId, resetToken);
+        authModel.deleteToken(+userId);
         const user = await authModel.findUser(+userId);
-        await authModel.upsertUser(user.email, password);
+        await authModel.upsertUser({"id": +userId, "email": user.email, password});
         res.redirect('/login');
     }   
     

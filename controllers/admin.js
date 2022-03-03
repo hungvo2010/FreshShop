@@ -1,7 +1,8 @@
 const deleteFile = require('../util/deleteFile');
+const getItemsPerPage = require('../util/ItemsPerPage');
 const adminModel = require('../models/Admin');
 
-const ITEMS_PER_PAGE = 2; 
+const ITEMS_PER_PAGE = getItemsPerPage(); 
 
 function getQueryPage(req){
     let page = req.query.page || 1;
@@ -78,6 +79,7 @@ exports.postEditProduct = async (req, res, next) => {
 		if (!product){
 			return res.redirect('/admin/products');
 		}
+
 		const newProduct = {
 			title,
 			price: parseFloat(price),
@@ -87,6 +89,7 @@ exports.postEditProduct = async (req, res, next) => {
 			deleteFile(product.imageUrl);
 			newProduct.imageUrl = newImage.path;      
 		}
+
 		await adminModel.updateProduct(+productId, newProduct);
 		res.redirect('/admin/products');
 	}
@@ -98,6 +101,7 @@ exports.postEditProduct = async (req, res, next) => {
 
 exports.getEditProduct = async (req, res, next) => {
 	const productId = req.params.productId;
+
 	try {
 		const product = await adminModel.findProduct(+productId, req.user.id);
 		if (!product){
@@ -120,6 +124,7 @@ exports.getEditProduct = async (req, res, next) => {
 
 exports.postDeleteProduct = async (req, res, next) => {
 	const productId = req.params.productId;
+	
 	try {
 		const product = await adminModel.findProduct(+productId, req.user.id);
 		
