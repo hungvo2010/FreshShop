@@ -30,19 +30,18 @@ async function upsertUser({id, email, password}){
         }
     });
 
-    // if (user){
-    //     console.log("reach here");
-    //     return null;
-    // }
+    if (user && id === -1){
+        return null;
+    }
 
     const hashedPassword = await bcryptjs.hash(password, 12);
     user = await prisma.user.upsert({
         where: {
-            OR: [
-                {email: email},
-                {id: id}
-            ]
-            // email,
+            // OR: [
+            //     {email: email},
+            //     {id: id}
+            // ]
+            email,
         },
         update: {
             password: hashedPassword
