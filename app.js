@@ -1,4 +1,6 @@
 const express = require('express');
+const createError = require('http-errors');
+
 const logger = require('./server/logger');
 const parser = require('./server/parser');
 const serveStatic = require('./server/serveStatic');
@@ -9,8 +11,6 @@ const logicRoute = require('./server/logicRoute');
 const attachUser = require('./middleware/attachUser');
 const populateRender = require('./middleware/populateRender');
 const errorHandling = require('./middleware/errorHandling');
-
-const createError = require('http-errors');
 
 const app = express();
 

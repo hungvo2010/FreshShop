@@ -53,19 +53,19 @@ exports.getProductDetail = async (req, res, next) => {
 }
 
 exports.getIndex = async (req, res, next) => {
-    const page = getQueryPage(req);
+    // const page = getQueryPage(req);
     
     try {
-        let totalItems = await shopModel.countProducts();
-        const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        const products = await shopModel.getProducts((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
+        // let totalItems = await shopModel.countProducts();
+        // const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        // const products = await shopModel.getProducts((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
         
         res.render('shop/index', {
-            prods: products,
+            // prods: products,
             pageTitle: 'All Products',
             path: '/products',
-            currentPage: +page,
-            lastPage,
+            // currentPage: +page,
+            // lastPage,
         });
     }
 
