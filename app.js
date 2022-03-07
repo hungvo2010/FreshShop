@@ -34,7 +34,9 @@ app.use(attachUser);
 // logic route
 logicRoute(app);
 app.use((req, res, next) => {
-    if (req.path !== '/favicon.ico') next(createError(404, 'Page not found.'));
+    res.render('404', {
+        pageTitle: 'FreshShop',
+    });
 })
 app.use(errorHandling);
 

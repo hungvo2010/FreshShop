@@ -61,11 +61,7 @@ exports.getIndex = async (req, res, next) => {
         // const products = await shopModel.getProducts((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
         
         res.render('shop/index', {
-            // prods: products,
-            pageTitle: 'All Products',
-            path: '/products',
-            // currentPage: +page,
-            // lastPage,
+            pageTitle: 'FreshShop',
         });
     }
 

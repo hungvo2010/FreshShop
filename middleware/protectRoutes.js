@@ -1,6 +1,6 @@
 const protectRoutes = (req, res, next) => {
-    if (!req.session.isLoggedIn){
-        return res.redirect('/login');
+    if (!req.session.isSignedIn){
+        return res.redirect('/signin');
     }
     next();
 }

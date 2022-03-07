@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 const csrf = require('csurf');
 const csrfProtection = csrf();
-const flash = require('connect-flash');
 
 module.exports = app => {
     app.enable('trust proxy');
@@ -21,5 +20,4 @@ module.exports = app => {
 
     app.use(helmet());
     app.use(compression());
-    app.use(flash());
 }

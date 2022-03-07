@@ -1,7 +1,7 @@
 const authModel = require('../models/Auth');
 
 module.exports = async (req, res, next) => {
-    if (!req.session.isLoggedIn){
+    if (!req.session.isSignedIn){
         return next();
     }
     

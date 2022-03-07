@@ -26,7 +26,6 @@
 @import url(bootsnav.css);
 @import url(owl.carousel.min.css);
 @import url(jquery-ui.css);
-@import url(nice-select.css);
 @import url(baguetteBox.min.css);
 
 /*------------------------------------------------------------------
@@ -1380,9 +1379,6 @@
      font-size: 14px;
      padding-bottom: 20px;
 }
-
- .footer-link{
-}
  .footer-link h4{
      color: #ffffff;
      font-size: 16px;
@@ -2598,6 +2594,20 @@
 	border: none;
 }
 
+#basic {
+    background-color: #b0b435;
+    color: #fff;
+    float: right;
+}
+
+#basic li:first-child {
+    float: left;
+    margin-right: 25px;
+}
+
+#basic li:last-child {
+    float: right;
+}
 
 
 

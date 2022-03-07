@@ -7,10 +7,10 @@ const authController = require('../controllers/auth');
 const router = express.Router();
 
 // /login => GET
-router.get('/login', authController.getLogin);
+router.get('/signin', authController.getSignin);
 
 // /login => POST
-router.post('/login', [
+router.post('/signin', [
     body('email').isEmail().withMessage('Your email is in invalid format'),
     body('password').trim().not().isEmpty().withMessage('Your password is empty')
 ], authController.postLogin);

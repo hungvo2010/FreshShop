@@ -1,5 +1,4 @@
 const authModel = require('../models/Auth');
-
 const crypto = require("crypto");
 
 const Email = require('../util/Email');
@@ -7,20 +6,10 @@ const getRootUrl = require('../util/getRootUrl');
 
 const { validationResult } = require('express-validator/check');
 
-function getErrorMessage(req){
-    let message = req.flash('error');
-    message = message.length > 0 ? message[0] : '';
-    return message;
-}
-
-exports.getLogin = (req, res, next) => {
-    let message = getErrorMessage(req);
-
-    res.render('auth/login', {
-        path: '/login',
-        pageTitle: 'Login',
-        errorMessage: message,
-        oldInput: {},
+exports.getSignin = (req, res, next) => {
+    res.render('auth/signin', {
+        pageTitle: 'Sign In',
+        path: '/signin'
     })
 }
 
@@ -48,7 +37,7 @@ exports.postLogin = async (req, res, next) => {
             return res.redirect('/login');
         }
 
-        req.session.isLoggedIn = true;
+        req.session.isSignedIn = true;
         req.session.user = fetchUser;
         return req.session.save(err => {
             res.redirect('/');
@@ -62,13 +51,10 @@ exports.postLogin = async (req, res, next) => {
 }
 
 exports.getSignup = (req, res, next) => {
-    let message = getErrorMessage(req);
-
+    
     res.render('auth/signup', {
-        path: '/signup',
-        pageTitle: 'Signup',
-        errorMessage: message,
-        oldInput: {}
+        pageTitle: 'Sign Up',
+        path: '/signup'
     })
 }
 
@@ -116,8 +102,6 @@ exports.postLogout = (req, res, next) => {
 }
 
 exports.getReset = (req, res, next) => {
-    let message = getErrorMessage(req);
-
     res.render('auth/reset', {
         path: '/reset',
         pageTitle: 'Reset Password',
