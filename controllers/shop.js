@@ -76,6 +76,66 @@ exports.getAboutUs = async (req, res, next) => {
     }
 }
 
+exports.getContactUs = async (req, res, next) => {
+    try {
+        res.render('shop/contact-us', {
+            pageTitle: 'Contact Us'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
+exports.getGallery = async (req, res, next) => {
+    try {
+        res.render('shop/gallery', {
+            pageTitle: 'Gallery'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
+exports.getMyAccount = async (req, res, next) => {
+    try {
+        res.render('shop/my-account', {
+            pageTitle: 'My Account'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
+exports.getWishList = async (req, res, next) => {
+    try {
+        res.render('shop/wishlist', {
+            pageTitle: 'WishList'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
+exports.getGallery = async (req, res, next) => {
+    try {
+        res.render('shop/gallery', {
+            pageTitle: 'Gallery'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
 exports.getCart = async (req, res, next) => {
 
     try {
