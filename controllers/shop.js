@@ -53,13 +53,7 @@ exports.getProductDetail = async (req, res, next) => {
 }
 
 exports.getIndex = async (req, res, next) => {
-    // const page = getQueryPage(req);
-    
     try {
-        // let totalItems = await shopModel.countProducts();
-        // const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        // const products = await shopModel.getProducts((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
-        
         res.render('shop/index', {
             pageTitle: 'FreshShop',
         });
@@ -70,29 +64,38 @@ exports.getIndex = async (req, res, next) => {
     }
 };
 
+exports.getAboutUs = async (req, res, next) => {
+    try {
+        res.render('shop/about', {
+            pageTitle: 'About Us'
+        });
+    }
+
+    catch(err) {
+        return next(err);
+    }
+}
+
 exports.getCart = async (req, res, next) => {
 
     try {
-        const cartInfo = await shopModel.getProductsOfCart(req.user.id);
-        let totalPrice = 0;
+        // const cartInfo = await shopModel.getProductsOfCart(req.user.id);
+        // let totalPrice = 0;
 
-        if (cartInfo && cartInfo.cartItem){
-            cartInfo.cartItem.forEach(prod => {
-                totalPrice += prod.quantity * prod.product.price;
-            })
-            return res.render('shop/cart', {
-                products: cartInfo.cartItem,
-                path: '/cart',
-                pageTitle: 'Your Cart',
-                totalPrice,
-            })
-        }
+        // if (cartInfo && cartInfo.cartItem){
+        //     cartInfo.cartItem.forEach(prod => {
+        //         totalPrice += prod.quantity * prod.product.price;
+        //     })
+        //     return res.render('shop/cart', {
+        //         products: cartInfo.cartItem,
+        //         path: '/cart',
+        //         pageTitle: 'Your Cart',
+        //         totalPrice,
+        //     })
+        // }
 
-        return res.render('shop/cart', {
-            products: [],
-            path: '/cart',
+        res.render('shop/cart', {
             pageTitle: 'Your Cart',
-            totalPrice,
         })
     }
 
@@ -100,6 +103,18 @@ exports.getCart = async (req, res, next) => {
         return next(err);
     }
 };
+
+exports.getCheckout = async (req, res, next) => {
+    try {
+        res.render('shop/checkout', {
+            pageTitle: 'Checkout'
+        })
+    }
+
+    catch (err) {
+        return next(err);
+    }
+}
 
 exports.postCart = async (req, res, next) => {
     const productId = req.body.productId;

@@ -2084,7 +2084,7 @@
  .coupon-box .input-group .input-group-append .btn-theme:hover {
      background: #b0b435;
 }
- .update-box input[type="submit"]{
+ .update-box button{
      background: #000000;
      border: medium none;
      border-radius: 0;
@@ -2107,7 +2107,7 @@
      white-space: nowrap;
      width: inherit;
 }
- .update-box input[type="submit"]:hover{
+ .update-box button:hover{
      background: #b0b435;
 }
  .order-box h3{

@@ -168,7 +168,7 @@
      .coupon-box{
          margin-bottom: 30px;
     }
-     .update-box input[type="submit"]{
+     .update-box button{
          margin-right: 0px;
     }
      .single-product-slider{
@@ -293,7 +293,7 @@
      .coupon-box{
          margin-bottom: 30px;
     }
-     .update-box input[type="submit"]{
+     .update-box button{
          margin-right: 0px;
     }
      .single-product-slider{
