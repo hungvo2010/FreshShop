@@ -1,11 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const logger = require('morgan');
+const winston = require('winston');
 
-const accessLogSchema = fs.createWriteStream(path.join(__dirname, 'access.log'), {
-    flags: 'a'
+const logger = winston.createLogger({
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format: winston.format.combine(winston.format.splat(), winston.format.simple()),
+  transports: [new winston.transports.Console()],
 });
 
-module.exports = server => {
-    server.use(logger('combined', {stream: accessLogSchema}));
-}
+module.exports = logger;

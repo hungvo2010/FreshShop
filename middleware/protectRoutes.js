@@ -1,8 +1,8 @@
+const createError = require('http-errors');
 const protectRoutes = (req, res, next) => {
-    // if (!req.session.isSignedIn){
-    //     return res.redirect('/signin');
-    // }
-    next();
+    if (!req.user){
+        return next(createError(403));
+    }
 }
 
 module.exports = protectRoutes;

@@ -2,8 +2,8 @@ const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const helmet = require('helmet');
 const compression = require('compression');
-const csrf = require('csurf');
-const csrfProtection = csrf();
+// const csrf = require('csurf');
+// const csrfProtection = csrf();
 
 module.exports = app => {
     app.enable('trust proxy');
@@ -16,7 +16,7 @@ module.exports = app => {
 
     app.use(xss());
 
-    app.use(csrfProtection);
+    // app.use(csrfProtection);
 
     app.use(helmet());
     app.use(compression());

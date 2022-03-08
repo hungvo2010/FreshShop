@@ -3,29 +3,27 @@ const crypto = require("crypto");
 
 const Email = require('../util/Email');
 const getRootUrl = require('../util/getRootUrl');
+const createJWTToken = require('../util/createJWTToken');
 
 const { validationResult } = require('express-validator/check');
+
+const attachToken = args => {
+    const {res, token} = args;
+    res.setHeader('Authorization', 'Bearer ' + token);
+}
 
 exports.getSignin = (req, res, next) => {
     res.render('auth/signin', {
         pageTitle: 'Sign In',
-        path: '/signin'
     })
 }
 
 exports.postLogin = async (req, res, next) => {
-    const {email, password} = req.body;
-
     const errors = validationResult(req);
+
     if (!errors.isEmpty()){
-        return res.render('auth/login', {
-            path: '/login',
-            pageTitle: 'Login',
-            errorMessage: errors.array()[0].msg,
-            oldInput: {
-                email,
-                password,
-            },
+        return res.render('auth/signin', {
+            pageTitle: 'Sign In',
         })
     }
 
@@ -33,20 +31,16 @@ exports.postLogin = async (req, res, next) => {
         const fetchUser = await authModel.authenUser(req.body);
 
         if (!fetchUser){
-            req.flash('error', 'Invalid user or password');
             return res.redirect('/login');
         }
 
-        req.session.isSignedIn = true;
-        req.session.user = fetchUser;
-        return req.session.save(err => {
-            res.redirect('/');
-        })
-
+        const jwtToken = createJWTToken(fetchUser);
+        attachToken({res, token: jwtToken});
+        res.redirect('/');
     } 
     
     catch(err) {
-        return next(err);
+        next(err);
     }
 }
 
@@ -54,37 +48,26 @@ exports.getSignup = (req, res, next) => {
     
     res.render('auth/signup', {
         pageTitle: 'Sign Up',
-        path: '/signup'
     })
 }
 
 exports.postSignup = async (req, res, next) => {
-    const {email, password, retypepassword} = req.body;
-
     const errors = validationResult(req);
 
     if (!errors.isEmpty()){
         return res.render('auth/signup', {
-            path: '/signup',
-            pageTitle: 'Signup',
-            errorMessage: errors.array()[0].msg,
-            oldInput: {
-                email,
-                password,
-                retypepassword
-            }
+            pageTitle: 'Sign Up',
         })
     }
 
     try {
-        const newUser = await authModel.upsertUser({id: -1, email, password});
+        const newUser = await authModel.createUser(req.body);
         if (!newUser) {
-            req.flash('error', 'Email exists');
             return res.redirect('/signup');
         }
 
         res.redirect('/login');
-        new Email(email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
+        // new Email(newUser.email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
     }
     
     catch (err) {

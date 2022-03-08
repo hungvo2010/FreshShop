@@ -4,7 +4,6 @@ const createError = require('http-errors');
 const logger = require('./server/logger');
 const parser = require('./server/parser');
 const serveStatic = require('./server/serveStatic');
-const configSession = require('./server/session');
 const configProduction = require('./server/configProduction');
 const logicRoute = require('./server/logicRoute');
 
@@ -17,14 +16,10 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-// loging
-logger(app);
 // parser
 parser(app);
 // server public
 serveStatic(app);
-// config session
-configSession(app);
 // config production
 configProduction(app);
 

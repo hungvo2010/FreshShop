@@ -20,35 +20,36 @@ async function authenUser({email, password}){
     }
 }
 
-async function upsertUser({id, email, password}){
-    let user = await prisma.user.findFirst({
+async function createUser({name, email, password}){
+    let user = await prisma.user.findUnique({
         where: {
-            OR: [
-                {email: email},
-                {id: id}
-            ]
+            email,
         }
     });
-
-    if (user && id === -1){
+    
+    // account exist
+    if (user){
         return null;
     }
 
     const hashedPassword = await bcryptjs.hash(password, 12);
-    user = await prisma.user.upsert({
-        where: {
-            // OR: [
-            //     {email: email},
-            //     {id: id}
-            // ]
+    return await prisma.user.create({
+        data: {
+            name,
             email,
-        },
-        update: {
             password: hashedPassword
-        },
-        create: {
+        }
+    })
+}
+
+async function updateUser({id, name, email, password}){
+    const hashedPassword = await bcryptjs.hash(password, 12);
+    const user = await prisma.user.update({
+        where: {
             id,
-            email,
+        },
+        data: {
+            name,
             password: hashedPassword
         }
     })
@@ -116,7 +117,8 @@ async function deleteToken(userId){
 
 module.exports = {
     authenUser,
-    upsertUser,
+    createUser,
+    updateUser,
     findUser,
     saveToken,
     findToken,

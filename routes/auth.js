@@ -21,8 +21,8 @@ router.get('/signup', authController.getSignup);
 // /signup => POST,
 router.post('/signup', [
     check('email').isEmail().withMessage('Your email is in invalid format'),
-    check('password').trim().isLength({min: 3}).withMessage('Your password is too short'),
-    check('retypepassword').trim().custom((value, {req}) => {
+    check('password').trim().isLength({min: 6}).withMessage('Your password is too short'),
+    check('confirmpassword').trim().custom((value, {req}) => {
         if (value !== req.body.password){
             throw new Error('Your confirm password was not match.');
         }
