@@ -8,9 +8,10 @@ const JWT_SECRET = dev ? process.env.JWT_SECRET_TEST : process.env.JWT_SECRET_LI
 
 module.exports = async (req, res, next) => {
     let token;
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
-        token = req.headers.authorization.split(' ')[1];
+    if (req.headers['Authorization'] && req.headers['Authorization'].startsWith('Bearer')){
+        token = req.headers['Authorization'].split(' ')[1];
     }
+    token = token || req.cookies.jwt;
     if (!token){
         return next();
     }
@@ -22,7 +23,7 @@ module.exports = async (req, res, next) => {
     }
 
     catch (err) {
-        return next(err);
+        next();
     }
     
 }

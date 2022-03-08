@@ -23,8 +23,8 @@ serveStatic(app);
 // config production
 configProduction(app);
 
-app.use(populateRender);
 app.use(attachUser);
+app.use(populateRender);
 
 // logic route
 logicRoute(app);

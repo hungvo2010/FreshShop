@@ -8,8 +8,13 @@ const createJWTToken = require('../util/createJWTToken');
 const { validationResult } = require('express-validator/check');
 
 const attachToken = args => {
-    const {res, token} = args;
+    const {req, res, token} = args;
     res.setHeader('Authorization', 'Bearer ' + token);
+    res.cookie('jwt', token, {
+        maxAge: 12 * 3600 * 1000,
+        httpOnly: true,
+        secure: req.secure || req.header('x-forwarded-proto') === 'https'
+    });
 }
 
 exports.getSignin = (req, res, next) => {
@@ -20,23 +25,20 @@ exports.getSignin = (req, res, next) => {
 
 exports.postLogin = async (req, res, next) => {
     const errors = validationResult(req);
-
     if (!errors.isEmpty()){
-        return res.render('auth/signin', {
-            pageTitle: 'Sign In',
-        })
+        return res.status(422).json({});
     }
 
     try {
         const fetchUser = await authModel.authenUser(req.body);
 
         if (!fetchUser){
-            return res.redirect('/login');
+            return res.status(401).json({});
         }
 
         const jwtToken = createJWTToken(fetchUser);
-        attachToken({res, token: jwtToken});
-        res.redirect('/');
+        attachToken({req, res, token: jwtToken});
+        res.status(200).json({});
     } 
     
     catch(err) {
@@ -53,20 +55,17 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = async (req, res, next) => {
     const errors = validationResult(req);
-
+    console.log(req.body);
     if (!errors.isEmpty()){
-        return res.render('auth/signup', {
-            pageTitle: 'Sign Up',
-        })
+        return res.status(422).json({});
     }
 
     try {
         const newUser = await authModel.createUser(req.body);
         if (!newUser) {
-            return res.redirect('/signup');
+            return res.status(409).json({});
         }
-
-        res.redirect('/login');
+        res.status(201).json({});
         // new Email(newUser.email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
     }
     
