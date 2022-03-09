@@ -43,7 +43,7 @@ router.post('/profile', authController.postUpdateProfile);
 router.post('/password', authController.postUpdatePassword);
 
 // /logout => POST
-router.post('/logout', authController.postLogout);
+router.get('/logout', authController.getLogout);
 
 // /reset => GET
 router.get('/reset', authController.getReset);

@@ -6,6 +6,7 @@ const getRootUrl = require('../util/getRootUrl');
 const createJWTToken = require('../util/createJWTToken');
 
 const { validationResult } = require('express-validator/check');
+const { prisma } = require('@prisma/client');
 
 const attachToken = args => {
     const {req, res, token} = args;
@@ -92,7 +93,7 @@ exports.postUpdatePassword = async (req, res, next) => {
     }
     
     try {
-        const user = await authModel.updatePassword(req.user.id, ...req.body);
+        const user = await authModel.updatePassword({id: req.user.id, ...req.body});
         if (!user){
             return res.status(404).json({});
         }
@@ -106,7 +107,9 @@ exports.postUpdatePassword = async (req, res, next) => {
 
 exports.getUpdateProfile = async (req, res, next) => {
     try {
+        const user = await authModel.findUser(req.user.id);
         res.render('auth/update-profile', {
+            user,
             pageTitle: 'Update profile',
         })
     }
@@ -123,11 +126,7 @@ exports.postUpdateProfile = async (req, res, next) => {
     }
     
     try {
-        console.log("Body: ", req.body);
-        console.log(req.user.id);
-        const temp = {id: req.user.id, ...req.body}
-        console.log(temp);
-        const user = await authModel.updateProfile(temp);
+        const user = await authModel.updateProfile({id: req.user.id, ...req.body});
         if (!user){
             return res.status(404).json({});
         }
@@ -139,13 +138,13 @@ exports.postUpdateProfile = async (req, res, next) => {
     }
 }
 
-exports.postLogout = (req, res, next) => {
+exports.getLogout = (req, res, next) => {
     res.cookie('jwt', 'loggedout', {
         expires: new Date(Date.now()),
         httpOnly: true,
         secure: req.secure || req.header('x-forwarded-proto') === 'https'
     });
-    res.status(204).json({});
+    res.redirect('/');
 }
 
 exports.getReset = (req, res, next) => {

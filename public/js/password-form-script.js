@@ -11,7 +11,7 @@ $("#passwordForm").validator().on("submit", function (event) {
 });
 
 function getData(...args){
-    const {oldpassword, newpassword, confirmpassword} = args;
+    const [oldpassword, newpassword, confirmpassword] = args;
     let data = "oldpassword=" + oldpassword + "&newpassword=" + newpassword + "&confirmpassword=" + confirmpassword;
     return data;
 }

@@ -31,19 +31,25 @@
             <div class="row">
                 <div class="col-lg-8 col-sm-12">
                     <div class="contact-form-right">
-                        <h2>UPDATE PROFILE</h2>
+                        <h2>PROFILE</h2>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed odio justo, ultrices ac nisl sed, lobortis porta elit. Fusce in metus ac ex venenatis ultricies at cursus mauris.</p>
                         <form id="profileForm">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="text" placeholder="Username" id="name" class="form-control" name="name" required data-error="Please enter your new username">
+                                        <input type="text" placeholder="Username" id="name" class="form-control" name="name" value= "<%= user.name %>" required data-error="Please enter your new username">
                                         <div class="help-block with-errors"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="tel" placeholder="Mobile number" id="mobile" class="form-control" name="mobile" required data-error="Please enter your mobile number">
+                                        <input type="email" placeholder="Email" id="email" class="form-control" name="email" value= "<%= user.email %>" required data-error="Please enter your email">
+                                        <div class="help-block with-errors"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input type="tel" placeholder="Mobile number" id="mobile" class="form-control" name="mobile" value= "<%= user.mobile %>" required data-error="Please enter your mobile number">
                                         <div class="help-block with-errors"></div>
                                     </div>
                                 </div>

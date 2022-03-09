@@ -49,7 +49,7 @@ function submitForm(){
 }
 
 function formSuccess(idForm, isError, message){
-    $(idForm)[0].reset();
+    // $(idForm)[0].reset();
     submitMSG(isError, message);
 }
 
