@@ -6,9 +6,18 @@ const getRootUrl = require('../util/getRootUrl');
 const createJWTToken = require('../util/createJWTToken');
 
 const { validationResult } = require('express-validator/check');
-const { prisma } = require('@prisma/client');
 
-const attachToken = args => {
+function validateRequestBody(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        const msg = errors.array()[0].msg;
+        res.status(422).json({message: msg});
+        return false;
+    }
+    return true;
+}
+
+function attachToken(args) {
     const {req, res, token} = args;
     res.setHeader('Authorization', 'Bearer ' + token);
     res.cookie('jwt', token, {
@@ -25,16 +34,16 @@ exports.getSignin = (req, res, next) => {
 }
 
 exports.postLogin = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(422).json({});
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
     }
 
     try {
         const fetchUser = await authModel.authenUser(req.body);
 
         if (!fetchUser){
-            return res.status(401).json({});
+            return res.status(401).json({message: "Your email or your password is incorrect"});
         }
 
         const jwtToken = createJWTToken(fetchUser);
@@ -55,15 +64,15 @@ exports.getSignup = (req, res, next) => {
 }
 
 exports.postSignup = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(422).json({});
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
     }
 
     try {
         const newUser = await authModel.createUser(req.body);
         if (!newUser) {
-            return res.status(409).json({});
+            return res.status(409).json({message: "This email address is already being used"});
         }
         res.status(201).json({});
         // new Email(newUser.email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
@@ -87,15 +96,15 @@ exports.getUpdatePassword = async (req, res, next) => {
 }
 
 exports.postUpdatePassword = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(422).json({});
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
     }
     
     try {
         const user = await authModel.updatePassword({id: req.user.id, ...req.body});
         if (!user){
-            return res.status(404).json({});
+            return res.status(404).json({message: "Your current password is incorrect"});
         }
         return res.status(204).json({});
     }
@@ -120,15 +129,15 @@ exports.getUpdateProfile = async (req, res, next) => {
 }
 
 exports.postUpdateProfile = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(422).json({});
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
     }
     
     try {
         const user = await authModel.updateProfile({id: req.user.id, ...req.body});
         if (!user){
-            return res.status(404).json({});
+            return res.status(404).json({message: "Your information is incorrect"});
         }
         return res.status(204).json({});
     }

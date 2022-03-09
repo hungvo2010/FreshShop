@@ -2,6 +2,7 @@ const express = require('express');
 const { check } = require('express-validator/check');
 const { body } = require('express-validator/check');
 
+const protectRoutes = require('../middleware/protectRoutes');
 const authController = require('../controllers/auth');
 
 const router = express.Router();
@@ -11,8 +12,8 @@ router.get('/signin', authController.getSignin);
 
 // /login => POST
 router.post('/signin', [
-    body('email').isEmail().withMessage('Your email is in invalid format'),
-    body('password').trim().not().isEmpty().withMessage('Your password is empty')
+    body('email').isEmail().withMessage('Invalid email address'),
+    body('password').trim().not().isEmpty().withMessage('Please enter your password')
 ], authController.postLogin);
 
 // /signup => GET,
@@ -20,30 +21,43 @@ router.get('/signup', authController.getSignup);
 
 // /signup => POST,
 router.post('/signup', [
-    check('email').isEmail().withMessage('Your email is in invalid format'),
-    check('password').trim().isLength({min: 6}).withMessage('Your password is too short'),
+    check('email').isEmail().withMessage('Invalid email address'),
+    check('password').trim().isLength({min: 6}).withMessage('Your password must be at least 6 characters'),
     check('confirmpassword').trim().custom((value, {req}) => {
         if (value !== req.body.password){
-            throw new Error('Your confirm password was not match.');
+            throw new Error("Confirm password doesn't match");
         }
         return true;
     })
 ], authController.postSignup);
 
 // /update-profile => GET
-router.get('/update-profile', authController.getUpdateProfile);
+router.get('/update-profile', protectRoutes, authController.getUpdateProfile);
 
 // /update-password => GET
-router.get('/update-password', authController.getUpdatePassword);
+router.get('/update-password', protectRoutes, authController.getUpdatePassword);
 
 // /profile => POST
-router.post('/profile', authController.postUpdateProfile);
+router.post('/profile', protectRoutes, [
+    check('name').not().isEmpty().withMessage('Please enter your username'),
+    check('email').isEmail().withMessage('Invalid email address'),
+    check('mobile').isMobilePhone().withMessage('Invalid mobile phone number'),
+], authController.postUpdateProfile);
 
 // /password => POST
-router.post('/password', authController.postUpdatePassword);
+router.post('/password', protectRoutes, [
+    check('oldpassword').trim().isLength({min: 6}).withMessage('Your old password must be at least 6 characters'),
+    check('newpassword').trim().isLength({min: 6}).withMessage('Your confirm password must be at least 6 characters'),
+    check('confirmpassword').trim().custom((value, {req}) => {
+        if (value !== req.body.newpassword){
+            throw new Error("Confirm password doesn't match");
+        }
+        return true;
+    })
+], authController.postUpdatePassword);
 
-// /logout => POST
-router.get('/logout', authController.getLogout);
+// /logout => GET
+router.get('/logout', protectRoutes, authController.getLogout);
 
 // /reset => GET
 router.get('/reset', authController.getReset);

@@ -1,7 +1,7 @@
 $("#authForm").validator().on("submit", function (event) {
     if (event.isDefaultPrevented()) {
         // handle the invalid form...
-        formError();
+        formError("#authForm");
         submitMSG(false, "Did you fill in the form properly?");
     } else {
         // everything looks good!
@@ -10,7 +10,8 @@ $("#authForm").validator().on("submit", function (event) {
     }
 });
 
-function getData(name, email, password, confirmpassword){
+function getData(...args){
+    const [name, email, password, confirmpassword] = args;
     let data = "";
     if (name){
         data = "name=" + name + "&";
@@ -40,9 +41,14 @@ function submitForm(){
         data,
         error: function(xhr, exception) {
             const status = xhr.status.toString();
+            const message = JSON.parse(xhr.responseText).message;
             if (status.startsWith('4')){
-                formError();
-                submitMSG(false, "Your information is invalid.");
+                formError("#authForm");
+                submitMSG(false, message);
+            }
+            else if (status.startsWith('5')){
+                formError("#authForm");
+                submitMSG(false, "Some errors occurred");
             }
         },
         success: function(data, textStatus, xhr) {
@@ -54,19 +60,16 @@ function submitForm(){
                 window.location.replace("http://localhost:3000/signin");
             }
         },
-        // complete: function(xhr, textStatus) {
-        //     console.log(xhr.status);
-        // } 
     });
 }
 
-function formSuccess(){
-    $("#contactForm")[0].reset();
-    submitMSG(true, "Message Submitted!")
+function formSuccess(idForm, message){
+    $(idForm)[0].reset();
+    submitMSG(true, message)
 }
 
-function formError(){
-    $("#authForm").removeClass().addClass('shake animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+function formError(idForm){
+    $(idForm).removeClass().addClass('shake animated').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
         $(this).removeClass();
     });
 }

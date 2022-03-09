@@ -1,7 +1,7 @@
 $("#passwordForm").validator().on("submit", function (event) {
     if (event.isDefaultPrevented()) {
         // handle the invalid form...
-        formError();
+        formError("#passwordForm");
         submitMSG(false, "Did you fill in the form properly?");
     } else {
         // everything looks good!
@@ -32,9 +32,14 @@ function submitForm(){
         data,
         error: function(xhr, exception) {
             const status = xhr.status.toString();
+            const message = JSON.parse(xhr.responseText).message;
             if (status.startsWith('4')){
                 formError("#passwordForm");
-                submitMSG(false, "Your information is invalid.");
+                submitMSG(false, message);
+            }
+            else if (status.startsWith('5')){
+                formError("#passwordForm");
+                submitMSG(false, "Some errors occurred");
             }
         },
         success: function(data, textStatus, xhr) {
@@ -42,10 +47,7 @@ function submitForm(){
             if (status.startsWith('2')){
                 formSuccess("#passwordForm", true, "Update password success!") // redirect
             }
-        },
-        // complete: function(xhr, textStatus) {
-        //     console.log(xhr.status);
-        // } 
+        }, 
     });
 }
 

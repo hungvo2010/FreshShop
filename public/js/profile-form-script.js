@@ -1,7 +1,7 @@
 $("#profileForm").validator().on("submit", function (event) {
     if (event.isDefaultPrevented()) {
         // handle the invalid form...
-        formError();
+        formError("#profileForm");
         submitMSG(false, "Did you fill in the form properly?");
     } else {
         // everything looks good!
@@ -11,8 +11,8 @@ $("#profileForm").validator().on("submit", function (event) {
 });
 
 function getData(...args){
-    const [name, mobile] = args;
-    let data = "name=" + name + "&mobile=" + mobile;
+    const [name, email, mobile] = args;
+    let data = "name=" + name + "&email=" + email + "&mobile=" + mobile;
     return data;
 }
 
@@ -20,9 +20,10 @@ function getData(...args){
 function submitForm(){
     // Initiate Variables With Form Content
     const name = $("#name").val();
+    const email = $("#email").val();
     const mobile = $("#mobile").val();
     
-    const data = getData(name, mobile);
+    const data = getData(name, email, mobile);
     const url = '/profile'
 
     $.ajax({
@@ -31,20 +32,22 @@ function submitForm(){
         data,
         error: function(xhr, exception) {
             const status = xhr.status.toString();
+            const message = JSON.parse(xhr.responseText).message;
             if (status.startsWith('4')){
                 formError("#profileForm");
-                submitMSG(false, "Your information is invalid.");
+                submitMSG(false, message);
+            }
+            else if (status.startsWith('5')){
+                formError("#profileForm");
+                submitMSG(false, "Some errors occurred, please try again later");
             }
         },
         success: function(data, textStatus, xhr) {
             const status = xhr.status.toString();
             if (status.startsWith('2')){
-                formSuccess("#profileForm", true, "Update profile success!") // redirect
+                formSuccess("#profileForm", true, "Update profile success!")
             }
         },
-        // complete: function(xhr, textStatus) {
-        //     console.log(xhr.status);
-        // } 
     });
 }
 

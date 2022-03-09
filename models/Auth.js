@@ -60,13 +60,13 @@ async function updatePassword({id, oldpassword, newpassword}){
     })
 }
 
-async function updateProfile({id, name, mobile}){
-    console.log(id, name, mobile);
+async function updateProfile({id, email, name, mobile}){
     return await prisma.user.update({
         where: {
             id,
         },
         data: {
+            email,
             name,
             mobile,
         }
