@@ -2,7 +2,7 @@
 
 <body>
     <!-- Start Main Top -->
-    <%- include('../includes/main-top-auth.ejs') %> 
+    <%- include('../includes/main-top.ejs') %> 
     <!-- End Main Top -->
 
     <!-- Start Main Top -->
@@ -31,30 +31,25 @@
             <div class="row">
                 <div class="col-lg-8 col-sm-12">
                     <div class="contact-form-right">
-                        <h2>SIGNIN FORM</h2>
+                        <h2>UPDATE PROFILE</h2>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed odio justo, ultrices ac nisl sed, lobortis porta elit. Fusce in metus ac ex venenatis ultricies at cursus mauris.</p>
-                        <form id="authForm">
+                        <form id="profileForm">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="email" placeholder="Email" id="email" class="form-control" name="name" required data-error="Please enter your email">
+                                        <input type="text" placeholder="Username" id="name" class="form-control" name="name" required data-error="Please enter your new username">
                                         <div class="help-block with-errors"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="password" placeholder="Password" id="password" class="form-control" name="password" required data-error="Please enter your password">
+                                        <input type="tel" placeholder="Mobile number" id="mobile" class="form-control" name="mobile" required data-error="Please enter your mobile number">
                                         <div class="help-block with-errors"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group">
-                                        <p style="font-size: 18px;">Don't have account yet? <a href="/signup" style="color: rgb(124, 214, 214);">Sign Up</a></p> 
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="submit-button text-center">
-                                        <button class="btn hvr-hover" id="submit" type="submit">Sign In</button>
+                                        <button class="btn hvr-hover" id="submit" type="submit">Update Profile</button>
                                         <div id="msgSubmit" class="h3 text-center hidden"></div>
                                         <div class="clearfix"></div>
                                     </div>
@@ -82,6 +77,7 @@
 
 
     <!-- Start Instagram Feed  -->
+    <%- include('../includes/instagram.ejs') %>
     <!-- End Instagram Feed  -->
 
 
@@ -90,7 +86,7 @@
     <!-- End Footer  -->
 
     <!-- Start copyright  -->
-    <%- include('../includes/copyright.ejs') %> 
+    <%- include('../includes/copyright.ejs') %>
     <!-- End copyright  -->
 
     <a href="#" id="back-to-top" title="Back to top" style="display: none;">&uarr;</a>
@@ -109,7 +105,7 @@
     <script src="js/owl.carousel.min.js"></script>
     <script src="js/baguetteBox.min.js"></script>
     <script src="js/form-validator.min.js"></script>
-    <script src="js/auth-form-script.js"></script>
+    <script src="js/profile-form-script.js"></script>
     <script src="js/custom.js"></script>
 </body>
 

@@ -7,7 +7,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const JWT_SECRET = dev ? process.env.JWT_SECRET_TEST : process.env.JWT_SECRET_LIVE;
 
 const createToken = user => {
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, {
+    const token = jwt.sign({ id: user.id }, JWT_SECRET, {
         expiresIn: '12h'
     });
     

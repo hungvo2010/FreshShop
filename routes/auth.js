@@ -30,6 +30,18 @@ router.post('/signup', [
     })
 ], authController.postSignup);
 
+// /update-profile => GET
+router.get('/update-profile', authController.getUpdateProfile);
+
+// /update-password => GET
+router.get('/update-password', authController.getUpdatePassword);
+
+// /profile => POST
+router.post('/profile', authController.postUpdateProfile);
+
+// /password => POST
+router.post('/password', authController.postUpdatePassword);
+
 // /logout => POST
 router.post('/logout', authController.postLogout);
 

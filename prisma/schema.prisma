@@ -15,6 +15,7 @@ model User {
   name String
   email   String @unique
   password  String
+  mobile String?
   products Product[]
   token Token?
   cart Cart?

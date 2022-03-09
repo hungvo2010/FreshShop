@@ -42,37 +42,43 @@ async function createUser({name, email, password}){
     })
 }
 
-async function updateUser({id, name, email, password}){
-    const hashedPassword = await bcryptjs.hash(password, 12);
-    const user = await prisma.user.update({
+async function updatePassword({id, oldpassword, newpassword}){
+    const user = await findUser(id);
+    const isEqual = await bcryptjs.compare(oldpassword, user.password);
+    if (!isEqual){
+        return null;
+    }
+
+    const newHashedPassword = await bcryptjs.hash(newpassword, 12);
+    return await prisma.user.update({
+        where: {
+            id,
+        },
+        data: {
+            password: newHashedPassword
+        }
+    })
+}
+
+async function updateProfile({id, name, mobile}){
+    console.log(id, name, mobile);
+    return await prisma.user.update({
         where: {
             id,
         },
         data: {
             name,
-            password: hashedPassword
+            mobile,
         }
     })
-
-    return user;
 }
 
-async function findUser(term){
-    let condition;
-    if (typeof term === 'string'){
-        condition = {
-            where: {
-                email: term,
-            }
+async function findUser(id){
+    let condition = {
+        where: {
+            id,
         }
-    }
-    else {
-        condition = {
-            where: {
-                id: term
-            }
-        }
-    }
+    };
     const user = await prisma.user.findFirst(condition);
 
     return user;
@@ -118,7 +124,8 @@ async function deleteToken(userId){
 module.exports = {
     authenUser,
     createUser,
-    updateUser,
+    updatePassword,
+    updateProfile,
     findUser,
     saveToken,
     findToken,

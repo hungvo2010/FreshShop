@@ -55,7 +55,6 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = async (req, res, next) => {
     const errors = validationResult(req);
-    console.log(req.body);
     if (!errors.isEmpty()){
         return res.status(422).json({});
     }
@@ -74,13 +73,79 @@ exports.postSignup = async (req, res, next) => {
     }
 }
 
-exports.postLogout = (req, res, next) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.log(err);
+exports.getUpdatePassword = async (req, res, next) => {
+    try {
+        res.render('auth/update-password', {
+            pageTitle: 'Update password',
+        })
+    }
+    
+    catch (err){
+        next(err);
+    }
+}
+
+exports.postUpdatePassword = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(422).json({});
+    }
+    
+    try {
+        const user = await authModel.updatePassword(req.user.id, ...req.body);
+        if (!user){
+            return res.status(404).json({});
         }
-        res.redirect('/');
-    })
+        return res.status(204).json({});
+    }
+
+    catch (err) {
+        next(err);
+    }
+}
+
+exports.getUpdateProfile = async (req, res, next) => {
+    try {
+        res.render('auth/update-profile', {
+            pageTitle: 'Update profile',
+        })
+    }
+    
+    catch (err){
+        next(err);
+    }
+}
+
+exports.postUpdateProfile = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(422).json({});
+    }
+    
+    try {
+        console.log("Body: ", req.body);
+        console.log(req.user.id);
+        const temp = {id: req.user.id, ...req.body}
+        console.log(temp);
+        const user = await authModel.updateProfile(temp);
+        if (!user){
+            return res.status(404).json({});
+        }
+        return res.status(204).json({});
+    }
+
+    catch (err) {
+        next(err);
+    }
+}
+
+exports.postLogout = (req, res, next) => {
+    res.cookie('jwt', 'loggedout', {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+        secure: req.secure || req.header('x-forwarded-proto') === 'https'
+    });
+    res.status(204).json({});
 }
 
 exports.getReset = (req, res, next) => {
