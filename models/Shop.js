@@ -3,12 +3,16 @@ const bcryptjs = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
-async function getProducts(offset, limit){
-    return await prisma.product.findMany({
-        skip: offset,
-        take: limit
-    })
+async function getProducts(){
+    return await prisma.product.findMany();
 }
+
+// async function getProducts(offset, limit){
+//     return await prisma.product.findMany({
+//         skip: offset,
+//         take: limit
+//     })
+// }
 
 async function findProduct(productId){
     return await prisma.product.findUnique({

@@ -8,7 +8,7 @@ const JWT_SECRET = dev ? process.env.JWT_SECRET_TEST : process.env.JWT_SECRET_LI
 
 const createToken = user => {
     const token = jwt.sign({ id: user.id }, JWT_SECRET, {
-        expiresIn: '12h'
+        expiresIn: '2h'
     });
     
     return token;

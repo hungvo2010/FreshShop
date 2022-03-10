@@ -13,7 +13,7 @@ router.get('/contact-us', shopController.getContactUs);
 
 router.get('/gallery', shopController.getGallery);
 
-router.get('/products', shopController.getProducts);
+router.get('/shop', shopController.getShop);
 
 router.get('/products/:productId', shopController.getProductDetail);
 

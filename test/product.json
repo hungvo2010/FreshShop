@@ -1,64 +1,29 @@
 [
     {
-        "id": 1,
-        "title": "Doan Trieu Dieu Anh",
-        "imageUrl": "images/1644596347149-hot-girl-Nam-Định.jpg",
-        "price": 9.99,
-        "description": "Sở hữu nét đẹp ngây thơ, trong sáng cùng thần thái cuốn hút, Đoàn Triệu Diệu Anh (sinh năm 2001) xuất hiện trên các diễn đàn trai xinh gái đẹp với biệt danh “nữ thần đồng phục.",
-        "userId": 1
+        "title": "Carrot 800g",
+        "imageUrl": "images/img-pro-01.jpg",
+        "price": 7.79,
+        "description": "Carrots are firm and crisp. The skin is mostly smooth, but it may have wrinkles that go from side to side. Carrots grow where the temperature is cool to warm. They grow best in soil that is loose."
     },
 
     {
-        "id": 2,
-        "title": "cas.naf",
-        "imageUrl": "images/1644627517719-tumblr_54010f0e224d74828bc79f86e3675e5a_cb1e4b18_1280.jpg",
-        "price": 3.51,
-        "description": "NE University",
-        "userId": 1
+        "title": "Potatoes 1kg",
+        "imageUrl": "images/img-pro-02.jpg",
+        "price": 9.79,
+        "description": "A potato contains a lot of starch and other carbohydrates. Potato usually has a light-brown or yellowish skin and is white or yellow inside. If the potato gets light on it, the tuber turns green and will be poisonous."
     },
 
     {
-        "id": 3,
-        "title": "Nemo Nguyen",
-        "imageUrl": "images/1644634267647-nemo-nguyen.jpg",
-        "price": 9.12,
-        "description": "Dai hoc UEF",
-        "userId": 1
+        "title": "Green Grapes 2kg",
+        "imageUrl": "images/img-pro-03.jpg",
+        "price": 25.12,
+        "description": "A grape is a fruit, botanically a berry, of the deciduous woody vines of the flowering plant genus Vitis. Grapes can be eaten fresh as table grapes, used for making wine, jam, grape juice, jelly,..."
     },
 
     {
-        "id": 4,
-        "title": "Thuy Thanh Nguyen",
-        "imageUrl": "images/1644628011373-ee09ca256ee805b0640725fe4e8a91c7.jpg",
-        "price": 74.12,
-        "description": "Cao dang y duoc",
-        "userId": 1
-    },
-
-    {
-        "id": 5,
-        "title": "Hang Phan",
-        "imageUrl": "images/1644634458270-phanhang.jpg",
-        "price": 99.99,
-        "description": "Khoa kiem toan NEU",
-        "userId": 1
-    },
-
-    {
-        "id": 6,
-        "title": "Dieu Anh",
-        "imageUrl": "images/1644900171373-a61.jpg",
-        "price": 4.12,
-        "description": "TGSN - Siren (feat. Tlinh & RZ Mas) | Official Music Video",
-        "userId": 1
-    },
-
-    {
-        "id": 7,
-        "title": "Co gi ko",
-        "imageUrl": "images/1645604284364-f8ac_65642840049.jpg",
-        "price": 3.12,
-        "description": "NEU University",
-        "userId": 1
+        "title": "Pine apple 300g",
+        "imageUrl": "images/big-img-02.jpg",
+        "price": 10.21,
+        "description": "The papaya, papaw, or pawpaw is the plant Carica papaya, one of the 22 accepted species in the genus Carica of the family Caricaceae."
     }
 ]

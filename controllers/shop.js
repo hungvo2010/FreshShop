@@ -10,20 +10,13 @@ function getQueryPage(req){
     return parseInt(page);
 }
 
-exports.getProducts = async (req, res, next) => {
-    const page = getQueryPage(req);
+exports.getShop = async (req, res, next) => {
 
     try {
-        let totalItems = await shopModel.countProducts();
-        const lastPage = Math.ceil(totalItems / ITEMS_PER_PAGE);
-        const products = await shopModel.getProducts((page - 1) * ITEMS_PER_PAGE, ITEMS_PER_PAGE);
-        
-        res.render('shop/product-list', {
-            prods: products,
+        const products = await shopModel.getProducts();
+        res.render('shop/shop', {
+            products,
             pageTitle: 'All Products',
-            path: '/products',
-            currentPage: page,
-            lastPage,
         });
     }
 

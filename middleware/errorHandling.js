@@ -12,6 +12,7 @@ module.exports = function(err, req, res, next) {
             isSignedIn: req.user ? true : false,
         });
     }
+    
     else {
         res.status(statusCode).json({message: message});
     }

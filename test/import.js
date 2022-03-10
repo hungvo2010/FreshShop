@@ -24,8 +24,8 @@ async function importProduct(){
 }
 
 const importData = async () => {
-    await importUser();
-    // await importProduct();
+    // await importUser();
+    await importProduct();
 };
 
 const deleteData = async () => {

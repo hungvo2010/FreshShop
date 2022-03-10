@@ -16,7 +16,7 @@ model User {
   email   String @unique
   password  String
   mobile String?
-  products Product[]
+  // products Product[]
   token Token?
   cart Cart?
   order Order[]
@@ -25,12 +25,12 @@ model User {
 
 model Product {
   id  String  @id @default(cuid())
-  user User @relation(fields: [userId], references: [id])
-  userId String
+  // user User @relation(fields: [userId], references: [id])
+  // userId String
   title   String
   imageUrl  String
-  price   Float
-  description   String
+  price   Decimal @db.Decimal(15, 2)
+  description  String @db.VarChar(255)
   cartItem CartItem[]
   orderItem OrderItem[]
   @@map("product")
