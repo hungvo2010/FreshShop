@@ -29,7 +29,7 @@ exports.getProductDetail = async (req, res, next) => {
     const productId = req.params.productId;
 
     try {
-        const product = await shopModel.findProduct(+productId);
+        const product = await shopModel.findProduct(productId);
         if (!product){
             return res.redirect('/');
         }
@@ -132,23 +132,25 @@ exports.getGallery = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
 
     try {
-        // const cartInfo = await shopModel.getProductsOfCart(req.user.id);
-        // let totalPrice = 0;
+        const cartInfo = await shopModel.getProductsInCart(req.user.id);
 
-        // if (cartInfo && cartInfo.cartItem){
-        //     cartInfo.cartItem.forEach(prod => {
-        //         totalPrice += prod.quantity * prod.product.price;
-        //     })
-        //     return res.render('shop/cart', {
-        //         products: cartInfo.cartItem,
-        //         path: '/cart',
-        //         pageTitle: 'Your Cart',
-        //         totalPrice,
-        //     })
-        // }
+        if (cartInfo && cartInfo.cartItem){
+            let subTotal = 0;
+            cartInfo.cartItem.forEach(prod => {
+                subTotal += prod.quantity * prod.product.price;
+            })
+            
+            return res.render('shop/cart', {
+                products: cartInfo.cartItem,
+                pageTitle: 'Your Cart',
+                subTotal: parseFloat(subTotal).toFixed(2),
+            })
+        }
 
         res.render('shop/cart', {
+            products: [],
             pageTitle: 'Your Cart',
+            subTotal: 0,
         })
     }
 
@@ -156,6 +158,18 @@ exports.getCart = async (req, res, next) => {
         return next(err);
     }
 };
+
+exports.postCart = async (req, res, next) => {
+    const productId = req.body.productId;
+    try {
+        await shopModel.addProductToCart(productId, req.user.id);
+        res.redirect('/cart');
+    }
+
+    catch (err) {
+        return next(err);
+    }
+}
 
 exports.getCheckout = async (req, res, next) => {
     try {
@@ -169,22 +183,12 @@ exports.getCheckout = async (req, res, next) => {
     }
 }
 
-exports.postCart = async (req, res, next) => {
-    const productId = req.body.productId;
-    try {
-        await shopModel.addProductToCart(+productId, req.user.id);
-        res.redirect('/cart');
-    }
 
-    catch (err) {
-        return next(err);
-    }
-}
 
 exports.deleteCart = async (req, res, next) => {
     const productId = req.body.productId;
     try {
-        await shopModel.deleteCartItem(+productId, req.user.id);
+        await shopModel.deleteCartItem(productId, req.user.id);
         res.redirect('/cart');
     }
 
@@ -229,7 +233,7 @@ exports.getCheckout = (req, res, next) => {
 exports.getInvoice = async (req, res, next) => {
     const orderId = req.params.orderId;
     try {
-        const productList = await shopModel.getSpecificOrder(+orderId);
+        const productList = await shopModel.getSpecificOrder(orderId);
         const pdfDoc = populateInvoice(productList, orderId);
 
         res.setHeader('Content-Type', 'application/pdf');

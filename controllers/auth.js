@@ -236,8 +236,8 @@ exports.postNewPassword = async (req, res, next) => {
         }
 
         authModel.deleteToken(+userId);
-        const user = await authModel.findUser(+userId);
-        await authModel.upsertUser({"id": +userId, "email": user.email, password});
+        const user = await authModel.findUser(userId);
+        await authModel.upsertUser({"id": userId, "email": user.email, password});
         res.redirect('/login');
     }   
     

@@ -19,7 +19,7 @@ router.get('/products/:productId', shopController.getProductDetail);
 
 router.get('/cart', protectRoutes, shopController.getCart);
 
-router.post('/cart', protectRoutes, shopController.postCart);
+router.post('/add-cart', protectRoutes, shopController.postCart);
 
 router.post('/delete-cart', protectRoutes, shopController.deleteCart);
 

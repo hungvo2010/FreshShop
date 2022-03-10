@@ -75,7 +75,7 @@ exports.postEditProduct = async (req, res, next) => {
 	const {productId, title, price, description} = req.body;
 
 	try {
-		let product = await adminModel.findProduct(+productId, req.user.id);
+		let product = await adminModel.findProduct(productId, req.user.id);
 		if (!product){
 			return res.redirect('/admin/products');
 		}
@@ -90,7 +90,7 @@ exports.postEditProduct = async (req, res, next) => {
 			newProduct.imageUrl = newImage.path;      
 		}
 
-		await adminModel.updateProduct(+productId, newProduct);
+		await adminModel.updateProduct(productId, newProduct);
 		res.redirect('/admin/products');
 	}
 
@@ -103,7 +103,7 @@ exports.getEditProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 
 	try {
-		const product = await adminModel.findProduct(+productId, req.user.id);
+		const product = await adminModel.findProduct(productId, req.user.id);
 		if (!product){
 			return res.redirect('/admin/products');
 		}
@@ -126,14 +126,14 @@ exports.postDeleteProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 	
 	try {
-		const product = await adminModel.findProduct(+productId, req.user.id);
+		const product = await adminModel.findProduct(productId, req.user.id);
 		
 		if (!product){
 			return res.redirect('/admin/products');
 		}
 		
 		deleteFile(product.imageUrl);
-		adminModel.deleteProduct(+productId);
+		adminModel.deleteProduct(productId);
 		res.status(200).json({});
 	}
 	

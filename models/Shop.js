@@ -22,7 +22,7 @@ async function findProduct(productId){
     })
 }
 
-async function getProductsOfCart(userId){
+async function getProductsInCart(userId){
     return await prisma.cart.findUnique({
         where: {
             userId,
@@ -106,7 +106,7 @@ async function addOrder(userId){
             userId
         }
     });
-    const cart = await getProductsOfCart(userId);
+    const cart = await getProductsInCart(userId);
     if (cart && cart.cartItem){
         for (let item of cart.cartItem){
             const newItem = {
@@ -147,7 +147,7 @@ module.exports = {
     findProduct,
     countProducts,
     addProductToCart,
-    getProductsOfCart,
+    getProductsInCart,
     deleteCartItem,
     getListOfOrders,
     addOrder,
