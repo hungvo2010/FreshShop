@@ -10,12 +10,33 @@ function getQueryPage(req){
     return parseInt(page);
 }
 
+async function getProductsFromCart(req){
+    if (req.user){
+        const cartInfo = await shopModel.getProductsInCart(req.user.id);
+        return cartInfo ? cartInfo.cartItem : [];
+    }
+    return [];
+}
+
+function calculateTotalPrice(products){
+    let total = 0;
+    products.forEach(prod => {
+        total += prod.quantity * prod.product.price;
+    });
+    return parseFloat(total).toFixed(2);
+}
+
 exports.getShop = async (req, res, next) => {
 
     try {
         const products = await shopModel.getProducts();
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/shop', {
+            cartItems: req.user ? cartItems : [],
             products,
+            totalPrice,
             pageTitle: 'All Products',
         });
     }
@@ -47,8 +68,15 @@ exports.getProductDetail = async (req, res, next) => {
 
 exports.getIndex = async (req, res, next) => {
     try {
+        const products = await shopModel.getProducts();
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/index', {
+            products,
             pageTitle: 'FreshShop',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -59,8 +87,13 @@ exports.getIndex = async (req, res, next) => {
 
 exports.getAboutUs = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/about', {
-            pageTitle: 'About Us'
+            pageTitle: 'About Us',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -71,8 +104,13 @@ exports.getAboutUs = async (req, res, next) => {
 
 exports.getContactUs = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/contact-us', {
-            pageTitle: 'Contact Us'
+            pageTitle: 'Contact Us',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -83,8 +121,13 @@ exports.getContactUs = async (req, res, next) => {
 
 exports.getGallery = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/gallery', {
-            pageTitle: 'Gallery'
+            pageTitle: 'Gallery',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -95,8 +138,13 @@ exports.getGallery = async (req, res, next) => {
 
 exports.getMyAccount = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/my-account', {
-            pageTitle: 'My Account'
+            pageTitle: 'My Account',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -107,8 +155,13 @@ exports.getMyAccount = async (req, res, next) => {
 
 exports.getWishList = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/wishlist', {
-            pageTitle: 'WishList'
+            pageTitle: 'WishList',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -119,8 +172,13 @@ exports.getWishList = async (req, res, next) => {
 
 exports.getGallery = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
         res.render('shop/gallery', {
-            pageTitle: 'Gallery'
+            pageTitle: 'Gallery',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         });
     }
 
@@ -132,25 +190,13 @@ exports.getGallery = async (req, res, next) => {
 exports.getCart = async (req, res, next) => {
 
     try {
-        const cartInfo = await shopModel.getProductsInCart(req.user.id);
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
 
-        if (cartInfo && cartInfo.cartItem){
-            let subTotal = 0;
-            cartInfo.cartItem.forEach(prod => {
-                subTotal += prod.quantity * prod.product.price;
-            })
-            
-            return res.render('shop/cart', {
-                products: cartInfo.cartItem,
-                pageTitle: 'Your Cart',
-                subTotal: parseFloat(subTotal).toFixed(2),
-            })
-        }
-
-        res.render('shop/cart', {
-            products: [],
+        return res.render('shop/cart', {
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
             pageTitle: 'Your Cart',
-            subTotal: 0,
         })
     }
 
@@ -163,7 +209,8 @@ exports.postCart = async (req, res, next) => {
     const productId = req.body.productId;
     try {
         await shopModel.addProductToCart(productId, req.user.id);
-        res.redirect('/cart');
+        const product = await shopModel.findProduct(productId);
+        res.status(201).json(product);
     }
 
     catch (err) {
@@ -173,8 +220,13 @@ exports.postCart = async (req, res, next) => {
 
 exports.getCheckout = async (req, res, next) => {
     try {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+        
         res.render('shop/checkout', {
-            pageTitle: 'Checkout'
+            pageTitle: 'Checkout',
+            cartItems: req.user ? cartItems : [],
+            totalPrice,
         })
     }
 
@@ -222,13 +274,6 @@ exports.postOrders = async (req, res, next) => {
         return next(err);
     }
 }
-
-exports.getCheckout = (req, res, next) => {
-    res.render('shop/checkout', {
-        path: '/checkout',
-        pageTitle: 'Checkout'
-    });
-};
 
 exports.getInvoice = async (req, res, next) => {
     const orderId = req.params.orderId;

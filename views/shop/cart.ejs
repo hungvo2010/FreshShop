@@ -51,7 +51,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <% for( let item of products ) { %>
+                                <% for( let item of cartItems ) { %>
                                     <tr>
                                         <td class="thumbnail-img">
                                             <a href="#">
@@ -68,7 +68,7 @@
                                         </td>
                                         <td class="quantity-box"><input type="number" size="4" value="<%= item.quantity %>" min="0" step="1" class="c-input-text qty text"></td>
                                         <td class="total-pr">
-                                            <p>$ <%= +item.product.price * +item.quantity %> </p>
+                                            <p>$ <%= (+item.product.price * +item.quantity).toFixed(2) %> </p>
                                         </td>
                                         <td class="remove-pr">
                                             <a href="#">
@@ -108,7 +108,7 @@
                         <h3>Order summary</h3>
                         <div class="d-flex">
                             <h4>Sub Total</h4>
-                            <div class="ml-auto font-weight-bold"> $ <%= subTotal %>  </div>
+                            <div class="ml-auto font-weight-bold"> $ <%= totalPrice %>  </div>
                         </div>
                         <div class="d-flex">
                             <h4>Discount</h4>

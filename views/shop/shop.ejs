@@ -83,10 +83,8 @@
                                                                 <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                                                 <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                                             </ul>
-                                                            <form action="/add-cart" method="POST">
-                                                                <input type="hidden" name="productId" value="<%= product.id %>" /> 
-                                                                <a class="cart" style="cursor: pointer;" id="addToCart">Add to Cart</a>
-                                                            </form>
+                                                            <input type="hidden" name="productId" value="<%= product.id %>">
+                                                            <a class="cart" href="#">Add to Cart</a>
                                                         </div>
                                                     </div>
                                                     <div class="why-text">

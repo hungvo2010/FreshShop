@@ -37,39 +37,10 @@
         <div class="attr-nav">
             <ul>
                 <li class="search"><a href="#"><i class="fa fa-search"></i></a></li>
-                <% if (isSignedIn) {%> 
-                    <li class="side-menu">
-                        <a href="#">
-                            <i class="fa fa-shopping-bag"></i>
-                            <span class="badge"><%= cartItems.length %> </span>
-                            <p>My Cart</p>
-                        </a>
-                    </li>
-                <% } %> 
             </ul>
         </div>
         <!-- End Atribute Navigation -->
     </div>
     <!-- Start Side Menu -->
-    <% if (isSignedIn) {%>
-        <div class="side">
-            <a href="#" class="close-side"><i class="fa fa-times"></i></a>
-            <li class="cart-box">
-                <ul class="cart-list">
-                    <% for( let item of cartItems ) { %>
-                        <li>
-                            <a href="/products/<%= item.product.id %>" class="photo"><img src="<%= item.product.imageUrl %> " class="cart-thumb" alt="<%= item.product.title %> " /></a>
-                            <h6><a href="/products/<%= item.product.id %>"><%= item.product.title %></a></h6>
-                            <p>1x - <span class="price">$<%= item.product.price %> </span></p>
-                        </li>
-                    <% } %>
-                    <li class="total">
-                        <a href="/cart" class="btn btn-default hvr-hover btn-cart">VIEW CART</a>
-                        <span class="float-right"><strong>Total</strong>: $<%= totalPrice %> </span>
-                    </li>
-                </ul>
-            </li>
-        </div>
-    <% } %> 
     <!-- End Side Menu -->
 </nav>
