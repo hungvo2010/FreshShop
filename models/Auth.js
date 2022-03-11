@@ -73,10 +73,13 @@ async function updateProfile({id, email, name, mobile}){
     })
 }
 
-async function findUser(id){
+async function findUser(query){
     let condition = {
         where: {
-            id,
+            OR: {
+                email: query,
+                id: query
+            }
         }
     };
     const user = await prisma.user.findFirst(condition);

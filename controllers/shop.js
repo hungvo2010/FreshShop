@@ -5,6 +5,18 @@ const shopModel = require('../models/Shop');
 
 const ITEMS_PER_PAGE = getItemsPerPage();
 
+const { validationResult } = require('express-validator/check');
+
+function validateRequestBody(req, res){
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        const msg = errors.array()[0].msg;
+        res.status(422).json({message: msg});
+        return false;
+    }
+    return true;
+}
+
 function getQueryPage(req){
     let page = req.query.page || 1;
     return parseInt(page);
@@ -206,6 +218,11 @@ exports.getCart = async (req, res, next) => {
 };
 
 exports.postCart = async (req, res, next) => {
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
+    }
+    
     const productId = req.body.productId;
     try {
         await shopModel.addProductToCart(productId, req.user.id);

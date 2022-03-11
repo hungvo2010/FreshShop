@@ -60,10 +60,12 @@ router.post('/password', protectRoutes, [
 router.get('/logout', protectRoutes, authController.getLogout);
 
 // /reset => GET
-router.get('/reset', authController.getReset);
+router.get('/reset-password', authController.getReset);
 
 // /reset => POST
-router.post('/reset', authController.postReset);
+router.post('/reset', [
+    check("email").isEmail().withMessage("Invalid email address"),
+], authController.postReset);
 
 // /reset/resetPassword => GET
 router.get('/reset/:resetToken', authController.getResetPassword);

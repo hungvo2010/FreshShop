@@ -1,4 +1,5 @@
 const express = require('express');
+const { check } = require('express-validator/check');
 
 const protectRoutes = require('../middleware/protectRoutes');
 const shopController = require('../controllers/shop');
@@ -19,7 +20,9 @@ router.get('/products/:productId', shopController.getProductDetail);
 
 router.get('/cart', protectRoutes, shopController.getCart);
 
-router.post('/add-cart', protectRoutes, shopController.postCart);
+router.post('/add-cart', protectRoutes, [
+    check("productId").not().isEmpty().withMessage("Invalid product")
+], shopController.postCart);
 
 router.post('/delete-cart', protectRoutes, shopController.deleteCart);
 

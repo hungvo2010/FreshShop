@@ -157,31 +157,29 @@ exports.getLogout = (req, res, next) => {
 }
 
 exports.getReset = (req, res, next) => {
-    res.render('auth/reset', {
-        path: '/reset',
-        pageTitle: 'Reset Password',
-        errorMessage: message,
-    })
+    try {
+        res.render('auth/reset', {
+            pageTitle: 'Reset Password',
+        })
+    }
+
+    catch (err){
+        next(err);
+    }
 }
 
 exports.postReset = async (req, res, next) => {
-    const {email} = req.body;
-
     try {
+        const { email } = req.body;
         const user = await authModel.findUser(email);
-
         if (!user){
-            req.flash('error', 'No account with your email found!');
-            return res.redirect('/reset');
+            return res.status(404).json({message: "No account associated with the email address"});
         }
 
         crypto.randomBytes(32, async (err, buffer) => {
             if (err) {
                 return next(err);
             }
-
-            req.flash('error', 'Check your inbox to reset password.');
-            res.redirect('/login');
 
             const token = buffer.toString("hex");
             try {
@@ -191,7 +189,8 @@ exports.postReset = async (req, res, next) => {
             catch (err) {
                 return next(err);
             }
-            new Email(email).sendPasswordReset(`<p>Click this <a href='${getRootUrl()}reset/${token}'>link</a> to reset your password.</p>`);
+            await new Email(email).sendPasswordReset(`<p>Click this <a href='${getRootUrl()}reset/${token}'>link</a> to reset your password.</p>`);
+            res.status(200).json({});
         })
     }
 
