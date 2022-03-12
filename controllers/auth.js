@@ -199,17 +199,11 @@ exports.postReset = async (req, res, next) => {
     }
 }
 
-exports.getResetPassword = async (req, res, next) => {
+exports.getNewPassword = async (req, res, next) => {
     const { token } = req.query;
 
     try {
         const existToken = await authModel.findToken(token);
-
-        if (!existToken){
-            req.flash('error', 'Your request is not recognized or already expired');
-            return res.redirect('/login');
-        }
-
         res.render('auth/new-password', {
             pageTitle: 'Choose new password',
             isValid: existToken ? true : false,

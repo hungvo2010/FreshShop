@@ -23,7 +23,7 @@ function submitForm(){
     const confirmpassword = $("#confirmpassword").val();
     
     const data = getData(newpassword, confirmpassword);
-    const url = '/users/new'
+    const url = '/new-password'
 
     $.ajax({
         type: "POST",

@@ -68,10 +68,10 @@ router.post('/reset', [
 ], authController.postReset);
 
 // /users/reset?token= => GET
-router.get('/users/reset', authController.getResetPassword);
+router.get('/new-password', authController.getNewPassword);
 
 // /reset/new-password => POST
-router.post('/users/new', [
+router.post('/new-password', [
     check('newpassword').trim().isLength({min: 6}).withMessage('Your confirm password must be at least 6 characters'),
     check('confirmpassword').trim().custom((value, {req}) => {
         if (value !== req.body.newpassword){
