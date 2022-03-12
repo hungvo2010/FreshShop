@@ -60,6 +60,19 @@ async function updatePassword({id, oldpassword, newpassword}){
     })
 }
 
+async function setNewPassword({id, newpassword}){
+    const user = await findUser(id);
+    const newHashedPassword = await bcryptjs.hash(newpassword, 12);
+    return await prisma.user.update({
+        where: {
+            id,
+        },
+        data: {
+            password: newHashedPassword
+        }
+    })
+}
+
 async function updateProfile({id, email, name, mobile}){
     return await prisma.user.update({
         where: {
@@ -74,15 +87,14 @@ async function updateProfile({id, email, name, mobile}){
 }
 
 async function findUser(query){
-    let condition = {
+    const user = await prisma.user.findFirst({
         where: {
-            OR: {
-                email: query,
-                id: query
-            }
+            OR: [
+                {email: query},
+                {id: query},
+            ]
         }
-    };
-    const user = await prisma.user.findFirst(condition);
+    });
 
     return user;
 }
@@ -94,12 +106,12 @@ async function saveToken(token, id){
         },
         update: {
             token,
-            expireIn: new Date(Date.now() + 600000)
+            expireIn: new Date(Date.now() + 10*60*1000)
         },
         create: {
             userId: id,
             token,
-            expireIn: new Date(Date.now() + 600000)
+            expireIn: new Date(Date.now() + 10*60*1000)
         }
     });
 }
@@ -128,6 +140,7 @@ module.exports = {
     authenUser,
     createUser,
     updatePassword,
+    setNewPassword,
     updateProfile,
     findUser,
     saveToken,

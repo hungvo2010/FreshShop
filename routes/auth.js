@@ -67,10 +67,18 @@ router.post('/reset', [
     check("email").isEmail().withMessage("Invalid email address"),
 ], authController.postReset);
 
-// /reset/resetPassword => GET
-router.get('/reset/:resetToken', authController.getResetPassword);
+// /users/reset?token= => GET
+router.get('/users/reset', authController.getResetPassword);
 
 // /reset/new-password => POST
-router.post('/new-password', authController.postNewPassword);
+router.post('/users/new', [
+    check('newpassword').trim().isLength({min: 6}).withMessage('Your confirm password must be at least 6 characters'),
+    check('confirmpassword').trim().custom((value, {req}) => {
+        if (value !== req.body.newpassword){
+            throw new Error("Confirm password doesn't match");
+        }
+        return true;
+    })
+], authController.postNewPassword);
 
 module.exports = router;

@@ -74,8 +74,8 @@ exports.postSignup = async (req, res, next) => {
         if (!newUser) {
             return res.status(409).json({message: "This email address is already being used"});
         }
+        await new Email().sendEmailWelcome(req.body.email);
         res.status(201).json({});
-        // new Email(newUser.email).send('<p>Hello! Welcome you to my page</p>', 'Sign Up Successfully');
     }
     
     catch (err) {
@@ -189,7 +189,7 @@ exports.postReset = async (req, res, next) => {
             catch (err) {
                 return next(err);
             }
-            await new Email(email).sendPasswordReset(`<p>Click this <a href='${getRootUrl()}reset/${token}'>link</a> to reset your password.</p>`);
+            await new Email().sendPasswordReset(email, token);
             res.status(200).json({});
         })
     }
@@ -200,10 +200,10 @@ exports.postReset = async (req, res, next) => {
 }
 
 exports.getResetPassword = async (req, res, next) => {
-    const { resetToken } = req.params;
+    const { token } = req.query;
 
     try {
-        const existToken = await authModel.findToken(resetToken);
+        const existToken = await authModel.findToken(token);
 
         if (!existToken){
             req.flash('error', 'Your request is not recognized or already expired');
@@ -211,10 +211,10 @@ exports.getResetPassword = async (req, res, next) => {
         }
 
         res.render('auth/new-password', {
-            path: '/new-password',
-            pageTitle: 'New Password',
-            resetToken,
-            userId: existToken.userId,            
+            pageTitle: 'Choose new password',
+            isValid: existToken ? true : false,
+            resetToken: existToken ? token : '',
+            tokenValidStatus: existToken ? '' : 'Your request is not recognized or already expired',           
         })
     }
 
@@ -224,20 +224,19 @@ exports.getResetPassword = async (req, res, next) => {
 }
 
 exports.postNewPassword = async (req, res, next) => {
-    const {userId, resetToken, password} = req.body;
+    const { newpassword, resetToken } = req.body;
 
     try {
         const existToken = await authModel.findToken(resetToken);
 
         if (!existToken){
-            req.flash('error', 'Your request is not recognized or already expired');
-            return res.redirect('/login');
+            return res.status(404).json({message: 'Your request is not recognized or already expired'});
         }
 
-        authModel.deleteToken(+userId);
-        const user = await authModel.findUser(userId);
-        await authModel.upsertUser({"id": userId, "email": user.email, password});
-        res.redirect('/login');
+        authModel.deleteToken(existToken.userId);
+        const user = await authModel.findUser(existToken.userId);
+        await authModel.setNewPassword({"id": existToken.userId, newpassword});
+        return res.status(204).json({});
     }   
     
     catch (err){

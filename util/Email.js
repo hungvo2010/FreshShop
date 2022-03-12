@@ -4,13 +4,14 @@ const { google } = require("googleapis");
 const path = require('path');
 const OAuth2 = google.auth.OAuth2;
 const ejs = require('ejs');
+const getRootUrl = require('../util/getRootUrl');
 
 require('dotenv').config({path: path.join(__dirname, '.env')});
 
 class Email {
     constructor(){
         this.dev = process.env.NODE_ENV !== 'production';
-        this.from = dev ? process.env.SENDER_EMAIL_TEST : process.env.SENDER_EMAIL_LIVE;
+        this.from = this.dev ? process.env.SENDER_EMAIL_TEST : process.env.SENDER_EMAIL_LIVE;
     }
 
     createTransport(){
@@ -50,8 +51,8 @@ class Email {
     }
     
     async send(...args){
-        const [template, subject, mailTo] = args;
-        const html = await ejs.renderFile(path.join(__dirname, "../views/emails", `${template}.pug`));
+        const [mailTo, template, options, subject] = args;
+        const html = await ejs.renderFile(path.join(__dirname, "../views/emails", `${template}.ejs`), options);
         const mailOptions = {
             from: this.from,
             to: mailTo,
@@ -61,17 +62,34 @@ class Email {
         await this.createTransport().sendMail(mailOptions);
     }
 
-    async sendPasswordReset() {
+    async sendPasswordReset(mailTo, token) {
+        const mailOptions = {
+            rootUrl: getRootUrl(),
+            contactUs: getRootUrl() + '/contact-us',
+            replyTo: this.from,
+            token,
+            mailTo,
+        }
         await this.send(
-           'reset',
-          'Your password reset token (valid for only 10 minutes)'
+            mailTo,
+            'reset',
+            mailOptions,
+            'Your password reset token (valid for only 10 minutes)',
         );
     }
 
-    async sendEmailWelcome() {
+    async sendEmailWelcome(mailTo) {
+        const mailOptions = {
+            rootUrl: getRootUrl(),
+            contactUs: getRootUrl() + '/contact-us',
+            replyTo: this.from,
+            mailTo,
+        }
         await this.send(
-           'welcome',
-          'Welcome to FreshShop'
+            mailTo,
+            'welcome',
+            mailOptions,
+            'Welcome to FreshShop'
         );
     }
 }
