@@ -58,10 +58,8 @@ async function addProductToWishList(productId, userId){
         },
         update: {},
         create: {
-            data: {
-                productId,
-                userId,
-            }
+            productId,
+            userId,
         } 
     })
 }
@@ -178,6 +176,7 @@ module.exports = {
     addProductToCart,
     getProductsInCart,
     getProductsInWishList,
+    addProductToWishList,
     deleteCartItem,
     getListOfOrders,
     addOrder,

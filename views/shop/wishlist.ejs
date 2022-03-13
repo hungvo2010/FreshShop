@@ -68,7 +68,8 @@
                                         </td>
                                         <td class="quantity-box">In Stock</td>
                                         <td class="add-pr">
-                                            <a class="btn hvr-hover" href="#">Add to Cart</a>
+                                            <input type="hidden" name="productId" value="<%= item.productId %>">
+                                            <a class="btn hvr-hover cart" href="#">Add to Cart</a>
                                         </td>
                                         <td class="remove-pr">
                                             <a href="#">
@@ -104,7 +105,8 @@
     <!-- ALL JS FILES -->
     <%- include('../includes/script.ejs') %> 
     <script src="/js/contact-form-script.js"></script>
-    <script src="/js/form-submit.js"></script>
+    <script src="/js/add-cart-submit.js"></script>
+    <script src="/js/add-wishlist-submit.js"></script>
     
 </body>
 

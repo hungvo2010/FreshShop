@@ -60,7 +60,7 @@
                         <li>
                             <a href="/products/<%= item.product.id %>" class="photo"><img src="<%= item.product.imageUrl %> " class="cart-thumb" alt="<%= item.product.title %> " /></a>
                             <h6><a href="/products/<%= item.product.id %>"><%= item.product.title %></a></h6>
-                            <p><%= item.quantity %>x - <span class="price">$<%= item.product.price %> </span></p>
+                            <p><%= item.quantity %>x - <span class="price">$<%= (item.product.price * item.quantity).toFixed(2) %> </span></p>
                         </li>
                     <% } %>
                     <li class="total">

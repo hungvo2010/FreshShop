@@ -1,4 +1,4 @@
-const addCartLink = document.querySelectorAll(".cart");
+const addCartLink = document.querySelectorAll("[class~='cart']");
 
 function createCartList(product){
     const li = document.createElement(li);
