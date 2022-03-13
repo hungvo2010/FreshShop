@@ -20,6 +20,7 @@ model User {
   token Token?
   cart Cart?
   order Order[]
+  wishlist WishList[]
   @@map("user")
 }
 
@@ -33,6 +34,7 @@ model Product {
   description  String @db.VarChar(255)
   cartItem CartItem[]
   orderItem OrderItem[]
+  wishlist WishList[]
   @@map("product")
 }
 
@@ -79,5 +81,14 @@ model OrderItem {
   orderId String
   @@id([productId, orderId])
   @@map("orderitem")
+}
+
+model WishList {
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+  user User @relation(fields: [userId], references: [id])
+  userId String
+  @@id([productId, userId])
+  @@map("wishlist")
 }
 

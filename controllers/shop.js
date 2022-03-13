@@ -168,16 +168,35 @@ exports.getMyAccount = async (req, res, next) => {
 exports.getWishList = async (req, res, next) => {
     try {
         const cartItems = await getProductsFromCart(req);
+        const wishlist = await shopModel.getProductsInWishList(req.user.id);
         const totalPrice = calculateTotalPrice(cartItems);
 
         res.render('shop/wishlist', {
-            pageTitle: 'WishList',
+            pageTitle: 'Wishlist',
+            wishlist,
             cartItems: req.user ? cartItems : [],
             totalPrice,
         });
     }
 
     catch(err) {
+        return next(err);
+    }
+}
+
+exports.postWishList = async (req, res, next) => {
+    const isValid = validateRequestBody(req, res);
+    if (!isValid){
+        return;
+    }
+    
+    const productId = req.body.productId;
+    try {
+        await shopModel.addProductToWishList(productId, req.user.id);
+        res.status(201).json({});
+    }
+
+    catch (err) {
         return next(err);
     }
 }

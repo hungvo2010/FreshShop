@@ -34,6 +34,10 @@ router.get('/my-account', protectRoutes, shopController.getMyAccount);
 
 router.get('/wishlist', protectRoutes, shopController.getWishList);
 
+router.post('/add-wishlist', protectRoutes, [
+    check("productId").not().isEmpty().withMessage("Invalid product")
+], shopController.postWishList);
+
 router.get('/orders/:orderId', protectRoutes, shopController.getInvoice);
 
 module.exports = router;

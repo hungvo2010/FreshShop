@@ -37,6 +37,35 @@ async function getProductsInCart(userId){
     })
 }
 
+async function getProductsInWishList(userId){
+    return await prisma.wishList.findMany({
+        where: {
+            userId,
+        },
+        include: {
+            product: true,
+        }
+    })
+}
+
+async function addProductToWishList(productId, userId){
+    await prisma.wishList.upsert({
+        where: {
+            productId_userId: {
+                productId,
+                userId,
+            }
+        },
+        update: {},
+        create: {
+            data: {
+                productId,
+                userId,
+            }
+        } 
+    })
+}
+
 async function getCart(userId){
     return await prisma.cart.upsert({
         where: {
@@ -148,6 +177,7 @@ module.exports = {
     countProducts,
     addProductToCart,
     getProductsInCart,
+    getProductsInWishList,
     deleteCartItem,
     getListOfOrders,
     addOrder,
