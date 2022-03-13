@@ -54,12 +54,12 @@
                                 <% for( let item of cartItems ) { %>
                                     <tr>
                                         <td class="thumbnail-img">
-                                            <a href="#">
+                                            <a href="<%= '/products/' + item.productId %> ">
                                         <img class="img-fluid" src="<%= item.product.imageUrl %>" alt="<%= item.product.title %>" />
                                     </a>
                                         </td>
                                         <td class="name-pr">
-                                            <a href="#">
+                                            <a href="<%= '/products/' + item.productId %> ">
                                         <%= item.product.title %>
                                     </a>
                                         </td>

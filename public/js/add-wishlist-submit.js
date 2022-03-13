@@ -1,5 +1,4 @@
 const addWishlistLink = document.querySelectorAll("[class='wishlist']");
-console.log(addWishlistLink)
 
 function createCartList(product){
     const li = document.createElement(li);
