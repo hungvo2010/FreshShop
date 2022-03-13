@@ -1,7 +1,5 @@
 const express = require('express');
-const createError = require('http-errors');
 
-const logger = require('./server/logger');
 const parser = require('./server/parser');
 const serveStatic = require('./server/serveStatic');
 const configProduction = require('./server/configProduction');

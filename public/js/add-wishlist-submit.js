@@ -1,10 +1,5 @@
 const addWishlistLink = document.querySelectorAll("[class='wishlist']");
 
-function createCartList(product){
-    const li = document.createElement(li);
-    
-}
-
 addWishlistLink.forEach(item => {
     item.addEventListener('click', event => {
         event.preventDefault();
