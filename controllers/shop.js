@@ -64,12 +64,16 @@ exports.getProductDetail = async (req, res, next) => {
     try {
         const product = await shopModel.findProduct(productId);
         if (!product){
-            return res.redirect('/');
+            return next();
         }
-        res.render('shop/product-detail', {
+        const cartItems = await getProductsFromCart(req);
+        const totalPrice = calculateTotalPrice(cartItems);
+
+        res.render('shop/shop-detail', {
+            cartItems: req.user ? cartItems : [],
             product,
+            totalPrice,
             pageTitle: product.title,
-            path: '/products/' + product.id,
         })
     }
 

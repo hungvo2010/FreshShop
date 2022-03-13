@@ -79,7 +79,7 @@
                                                         <img src="<%= product.imageUrl %> " class="img-fluid" alt="product.title">
                                                         <div class="mask-icon">
                                                             <ul>
-                                                                <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                                                <li><a href="<%= '/products/' + product.id %> " data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
                                                                 <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                                                 <li>
                                                                     <input type="hidden" name="productId" value="<%= product.id %>">

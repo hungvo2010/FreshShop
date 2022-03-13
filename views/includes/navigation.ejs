@@ -5,7 +5,7 @@
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-menu" aria-controls="navbars-rs-food" aria-expanded="false" aria-label="Toggle navigation">
             <i class="fa fa-bars"></i>
         </button>
-            <a class="navbar-brand" href="/"><img src="images/logo.png" class="logo" alt=""></a>
+            <a class="navbar-brand" href="/"><img src="/images/logo.png" class="logo" alt=""></a>
         </div>
         <!-- End Header Navigation -->
 
@@ -17,8 +17,7 @@
                 <li class="dropdown">
                     <a href="/shop" class="nav-link dropdown-toggle arrow" data-toggle="dropdown">SHOP</a>
                     <ul class="dropdown-menu">
-                        <li><a href="/shop">Sidebar Shop</a></li>
-                        <li><a href="shop-detail.html">Shop Detail</a></li>
+                        <li><a href="/shop">Products</a></li>
                         <% if (isSignedIn) {%>
                             <li><a href="/cart">Cart</a></li>
                             <li><a href="/checkout">Checkout</a></li>
@@ -58,7 +57,7 @@
                 <ul class="cart-list">
                     <% for( let item of cartItems ) { %>
                         <li>
-                            <a href="/products/<%= item.product.id %>" class="photo"><img src="<%= item.product.imageUrl %> " class="cart-thumb" alt="<%= item.product.title %> " /></a>
+                            <a href="/products/<%= item.product.id %>" class="photo"><img src="/<%= item.product.imageUrl %> " class="cart-thumb" alt="<%= item.product.title %> " /></a>
                             <h6><a href="/products/<%= item.product.id %>"><%= item.product.title %></a></h6>
                             <p><%= item.quantity %>x - <span class="price">$<%= (item.product.price * item.quantity).toFixed(2) %> </span></p>
                         </li>
