@@ -137,7 +137,7 @@ exports.postUpdateProfile = async (req, res, next) => {
     try {
         const user = await authModel.updateProfile({id: req.user.id, ...req.body});
         if (!user){
-            return res.status(404).json({message: "Your information is incorrect"});
+            return res.status(404).json({message: "Your information is invalid"});
         }
         return res.status(204).json({});
     }
@@ -227,8 +227,7 @@ exports.postNewPassword = async (req, res, next) => {
             return res.status(404).json({message: 'Your request is not recognized or already expired'});
         }
 
-        authModel.deleteToken(existToken.userId);
-        const user = await authModel.findUser(existToken.userId);
+        await authModel.deleteToken(existToken.userId);
         await authModel.setNewPassword({"id": existToken.userId, newpassword});
         return res.status(204).json({});
     }   

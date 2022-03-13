@@ -61,7 +61,6 @@ async function updatePassword({id, oldpassword, newpassword}){
 }
 
 async function setNewPassword({id, newpassword}){
-    const user = await findUser(id);
     const newHashedPassword = await bcryptjs.hash(newpassword, 12);
     return await prisma.user.update({
         where: {
@@ -74,6 +73,11 @@ async function setNewPassword({id, newpassword}){
 }
 
 async function updateProfile({id, email, name, mobile}){
+    const userWithEmail = await findUser(email);
+    if (userWithEmail && userWithEmail.id !== id){
+        return null;
+    }
+
     return await prisma.user.update({
         where: {
             id,
