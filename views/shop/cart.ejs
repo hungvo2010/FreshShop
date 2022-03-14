@@ -71,7 +71,7 @@
                                             <p>$ <%= (+item.product.price * +item.quantity).toFixed(2) %> </p>
                                         </td>
                                         <td class="remove-pr">
-                                            <a href="#">
+                                            <a data-productId="<%= item.productId %>" href="#" class="remove-cart">
                                         <i class="fas fa-times"></i>
                                     </a>
                                         </td>
@@ -158,6 +158,7 @@
 
     <!-- ALL JS FILES -->
     <%- include('../includes/script.ejs') %>
+    <script src="js/remove-cart-wishlist.js"></script>
 </body>
 
 </html>

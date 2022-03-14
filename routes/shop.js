@@ -24,7 +24,13 @@ router.post('/add-cart', protectRoutes, [
     check("productId").not().isEmpty().withMessage("Invalid product")
 ], shopController.postCart);
 
-router.post('/delete-cart', protectRoutes, shopController.deleteCart);
+router.post('/remove-cart', protectRoutes, [
+    check("productId").not().isEmpty().withMessage("Invalid product")
+], shopController.removeCart);
+
+router.post('/remove-wishlist', protectRoutes, [
+    check("productId").not().isEmpty().withMessage("Invalid product")
+], shopController.removeWishlist);
 
 router.get('/orders', protectRoutes, shopController.getOrders);
 

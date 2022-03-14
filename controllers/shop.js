@@ -137,10 +137,12 @@ exports.getContactUs = async (req, res, next) => {
 
 exports.getGallery = async (req, res, next) => {
     try {
+        const products = await shopModel.getProducts();
         const cartItems = await getProductsFromCart(req);
         const totalPrice = calculateTotalPrice(cartItems);
 
         res.render('shop/gallery', {
+            products,
             pageTitle: 'Gallery',
             cartItems: req.user ? cartItems : [],
             totalPrice,
@@ -205,23 +207,6 @@ exports.postWishList = async (req, res, next) => {
     }
 }
 
-exports.getGallery = async (req, res, next) => {
-    try {
-        const cartItems = await getProductsFromCart(req);
-        const totalPrice = calculateTotalPrice(cartItems);
-
-        res.render('shop/gallery', {
-            pageTitle: 'Gallery',
-            cartItems: req.user ? cartItems : [],
-            totalPrice,
-        });
-    }
-
-    catch(err) {
-        return next(err);
-    }
-}
-
 exports.getCart = async (req, res, next) => {
 
     try {
@@ -275,13 +260,23 @@ exports.getCheckout = async (req, res, next) => {
     }
 }
 
-
-
-exports.deleteCart = async (req, res, next) => {
+exports.removeCart = async (req, res, next) => {
     const productId = req.body.productId;
     try {
         await shopModel.deleteCartItem(productId, req.user.id);
-        res.redirect('/cart');
+        res.status(204).json({message: "success"});
+    }
+
+    catch (err) {
+        return next(err);
+    }
+}
+
+exports.removeWishlist = async (req, res, next) => {
+    const productId = req.body.productId;
+    try {
+        await shopModel.deleteWishlistItem(productId, req.user.id);
+        res.status(204).json({});
     }
 
     catch (err) {

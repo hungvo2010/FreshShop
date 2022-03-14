@@ -53,194 +53,35 @@
                             <button data-filter=".fruits">Fruits</button>
 							<button data-filter=".podded-vegetables">Podded vegetables</button>
 							<button data-filter=".root-and-tuberous">Root and tuberous</button>
+                            <button data-filter=".others">Others</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="row special-list">
-                <div class="col-lg-3 col-md-6 special-grid bulbs">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <div class="type-lb">
-                                <p class="sale">Sale</p>
-                            </div>
-                            <img src="images/gallery-img-01.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                                <a class="cart" href="#">Add to Cart</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid fruits">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-02.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>                        
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid bulbs">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-03.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>                                
+                <% for( let product of products ) { %>
+                    <div class="col-lg-3 col-md-6 special-grid <%= product.type %>">
+                        <div class="products-single fix">
+                            <div class="box-img-hover">
+                                <div class="type-lb">
+                                    <p class="<%= product.status.toLowerCase() %>"><%= product.status %></p>
+                                </div>
+                                <img src="<%= product.imageUrl %>" class="img-fluid" alt="<%= product.title %> ">
+                                <div class="mask-icon">
+                                    <ul>
+                                        <li><a href="<%= '/products/' + product.id %> " data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
+                                        <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
+                                        <li><a href="#" data-productid="<%= product.id %>" data-toggle="tooltip" data-placement="right" title="Add to Wishlist" class="wishlist"><i class="far fa-heart"></i></a></li>
+                                    </ul>
+                                    <% if (product.available) { %>
+                                     <a class="cart" href="#" data-productid="<%= product.id %>">Add to Cart</a>
+                                    <% } %>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid fruits">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">                            
-                            <img src="images/gallery-img-04.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>                                
-                            </div>
-                        </div>                        
-                    </div>
-                </div>
-				<div class="col-lg-3 col-md-6 special-grid bulbs">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-05.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid fruits">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">                            
-                            <img src="images/gallery-img-06.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid podded-vegetables">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-07.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid root-and-tuberous">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">                            
-                            <img src="images/gallery-img-08.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>                        
-                    </div>
-                </div>
-				
-				<div class="col-lg-3 col-md-6 special-grid root-and-tuberous">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">                            
-                            <img src="images/gallery-img-09.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid podded-vegetables">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-10.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid root-and-tuberous">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">                           
-                            <img src="images/gallery-img-11.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>                                
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-6 special-grid podded-vegetables">
-                    <div class="products-single fix">
-                        <div class="box-img-hover">
-                            <img src="images/gallery-img-12.jpg" class="img-fluid" alt="Image">
-                            <div class="mask-icon">
-                                <ul>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="View"><i class="fas fa-eye"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
-                                    <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>                        
-                    </div>
-                </div>
+                <% } %>
             </div>
         </div>
     </div>
@@ -263,6 +104,7 @@
 
     <!-- ALL JS FILES -->
     <%- include('../includes/script.ejs') %>
+    <script src="js/add-cart-wishlist.js"></script>
 </body>
 
 </html>

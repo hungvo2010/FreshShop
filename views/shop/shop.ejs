@@ -74,7 +74,7 @@
                                                 <div class="products-single fix">
                                                     <div class="box-img-hover">
                                                         <div class="type-lb">
-                                                            <p class="sale">Sale</p>
+                                                            <p class="<%= product.status.toLowerCase() %>"><%= product.status %></p>
                                                         </div>
                                                         <img src="<%= product.imageUrl %> " class="img-fluid" alt="product.title">
                                                         <div class="mask-icon">
@@ -103,7 +103,7 @@
                                                     <div class="products-single fix">
                                                         <div class="box-img-hover">
                                                             <div class="type-lb">
-                                                                <p class="new">New</p>
+                                                                <p class="<%= product.status.toLowerCase() %>"><%= product.status %> </p>
                                                             </div>
                                                             <img src="<%= product.imageUrl %> " class="img-fluid" alt="<%= product.title %> ">
                                                             <div class="mask-icon">
@@ -119,7 +119,12 @@
                                                 <div class="col-sm-6 col-md-6 col-lg-8 col-xl-8">
                                                     <div class="why-text full-width">
                                                         <h4><%= product.title %> </h4>
-                                                        <h5> <del>$ <%= +product.price + 15.29 %> </del>$<%= product.price %> </h5>
+                                                        <h5> 
+                                                            <% if (product.discount !== 0) { %>
+                                                                <del>$ <%= +product.price %> </del>
+                                                            <% } %>
+                                                            $<%= (product.price * (100 - product.discount) / 100).toFixed(2) %> 
+                                                        </h5>
                                                         <p><%= product.description %> </p>
                                                         <a class="cart" data-productId="<%= product.id %>" href="#">Add to Cart</a>
                                                     </div>

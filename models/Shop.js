@@ -89,6 +89,17 @@ async function deleteCartItem(productId, userId){
     })
 }
 
+async function deleteWishlistItem(productId, userId){
+    await prisma.wishList.delete({
+        where: {
+            productId_userId: {
+                productId,
+                userId,
+            }
+        }
+    })
+}
+
 async function addProductToCart(productId, userId){
     let cart = await getCart(userId);
 
@@ -177,6 +188,7 @@ module.exports = {
     getProductsInCart,
     getProductsInWishList,
     addProductToWishList,
+    deleteWishlistItem,
     deleteCartItem,
     getListOfOrders,
     addOrder,

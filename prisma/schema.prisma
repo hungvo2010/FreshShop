@@ -36,7 +36,8 @@ model Product {
   orderItem OrderItem[]
   wishlist WishList[]
   type String @default("others")
-  discount Decimal @db.Decimal(15, 2) @default(0)
+  status String @default("NEW")
+  discount Float @default(0)
   quantity Int @default(0)
   available Boolean @default(true)
   @@map("product")
