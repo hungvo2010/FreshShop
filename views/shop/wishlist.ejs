@@ -71,7 +71,7 @@
                                             <a class="btn hvr-hover cart" data-productId="<%= item.productId %>" href="#">Add to Cart</a>
                                         </td>
                                         <td class="remove-pr">
-                                            <a href="#">
+                                            <a data-productId="<%= item.productId %>" href="#" class="remove-wishlist">
                                         <i class="fas fa-times"></i>
                                     </a>
                                         </td>
@@ -104,6 +104,7 @@
     <!-- ALL JS FILES -->
     <%- include('../includes/script.ejs') %> 
     <script src="js/add-cart-wishlist.js"></script>
+    <script src="js/remove-cart-wishlist.js"></script>
 </body>
 
 </html>
