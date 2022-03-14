@@ -14,15 +14,7 @@ addCartLink.forEach(item => {
             })
         })
         .then(res => {
-            return res.json();
-        })
-        .then(product => {
-            // const li = document.createElement('li');
-            // li.setA
-            // const ul = document.querySelector("cart-list");
-            // const badge = document.querySelector("badge");
-            // ul.insertBefore()
-            window.location.replace('/cart');
+            item.childNodes[0].style.color = "red";
         })
     })
 })
@@ -40,15 +32,7 @@ addWishlistLink.forEach(item => {
             })
         })
         .then(res => {
-            return res.json();
-        })
-        .then(product => {
-            // const li = document.createElement('li');
-            // li.setA
-            // const ul = document.querySelector("cart-list");
-            // const badge = document.querySelector("badge");
-            // ul.insertBefore()
-            window.location.replace('/wishlist');
+            item.childNodes[0].style.color = "#d93f34";
         })
     })
 })
