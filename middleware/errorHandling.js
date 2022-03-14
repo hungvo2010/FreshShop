@@ -6,7 +6,7 @@ module.exports = function(err, req, res, next) {
     const message = err.message || "Some errors occurred, please try again later.";
     if (req.method == 'GET')
     {
-        res.status(statusCode).render('500', 
+        res.render('error/500', 
         {
             pageTitle: '500 Page',
             isSignedIn: req.user ? true : false,

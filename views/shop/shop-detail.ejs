@@ -84,15 +84,14 @@
 						<div class="price-box-bar">
 							<div class="cart-and-bay-btn">
 								<a class="btn hvr-hover" data-fancybox-close="" href="#">Buy New</a>
-                                <input type="hidden" name="productId" value="<%= product.id %>">
-								<a class="btn hvr-hover cart" data-fancybox-close="" href="#">Add to cart</a>
+								<a class="btn hvr-hover cart" data-fancybox-close="" data-productId="<%= product.id %>" href="#">Add to Cart</a>
 							</div>
 						</div>
 
 						<div class="add-to-btn">
 							<div class="add-comp">
                                 <input type="hidden" name="productId" value="<%= product.id %>">
-								<a class="btn hvr-hover" href="#"><i class="fas fa-heart" class="wishlist"></i> Add to wishlist</a>
+								<a class="btn hvr-hover wishlist" href="#"><i class="fas fa-heart"></i> Add to wishlist</a>
 								<a class="btn hvr-hover" href="#"><i class="fas fa-sync-alt"></i> Add to Compare</a>
 							</div>
 							<div class="share-bar">
@@ -165,7 +164,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -184,7 +183,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -203,7 +202,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -222,7 +221,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -241,7 +240,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -260,7 +259,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -279,7 +278,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
@@ -298,7 +297,7 @@
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Compare"><i class="fas fa-sync-alt"></i></a></li>
                                             <li><a href="#" data-toggle="tooltip" data-placement="right" title="Add to Wishlist"><i class="far fa-heart"></i></a></li>
                                         </ul>
-                                        <a class="cart" href="#">Add to Cart</a>
+                                        <a class="cart" href="#" data-productId="<%= product.id %>">Add to Cart</a>
                                     </div>
                                 </div>
                                 <div class="why-text">
