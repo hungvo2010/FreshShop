@@ -50,8 +50,7 @@
                                     <th>Remove</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <% for( let item of cartItems ) { %>
+                            <tbody><% for( let item of cartItems ) { %>
                                     <tr>
                                         <td class="thumbnail-img">
                                             <a href="<%= '/products/' + item.productId %> ">
@@ -159,6 +158,7 @@
     <!-- ALL JS FILES -->
     <%- include('../includes/script.ejs') %>
     <script src="js/remove-cart-wishlist.js"></script>
+    <script src="js/update-cart.js"></script>
 </body>
 
 </html>

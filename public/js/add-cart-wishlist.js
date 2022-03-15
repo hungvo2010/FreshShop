@@ -14,7 +14,7 @@ addCartLink.forEach(item => {
             })
         })
         .then(res => {
-            item.childNodes[0].style.color = "red";
+            window.location.replace('/cart'); // redirect to cart
         })
     })
 })
