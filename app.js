@@ -27,7 +27,7 @@ app.use(populateRender);
 // logic route
 logicRoute(app);
 app.use((req, res, next) => {
-    res.render('404', {
+    res.render('error/404', {
         pageTitle: 'FreshShop',
     });
 })

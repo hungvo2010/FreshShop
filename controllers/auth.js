@@ -170,6 +170,11 @@ exports.getReset = (req, res, next) => {
 
 exports.postReset = async (req, res, next) => {
     try {
+        const isValid = validateRequestBody(req, res);
+        if (!isValid){
+            return;
+        }
+
         const { email } = req.body;
         const user = await authModel.findUser(email);
         if (!user){
