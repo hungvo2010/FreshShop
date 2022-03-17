@@ -590,7 +590,7 @@
     }
 }
  .arrow::before{
-     font-family: 'FontAwesome';
+     font-family: 'Font Awesome 5 Free';
      content: "\f0d7";
      margin-left: 5px;
      margin-top: 2px;
@@ -1414,7 +1414,7 @@
      -ms-transition: all .3s ease-in-out;
 }
  .footer-link ul li a::before {
-     font-family: FontAwesome;
+     font-family: 'Font Awesome 5 Free';
      content: "\f105";
      position: absolute;
      left: 5px;
@@ -1818,9 +1818,27 @@
      transition: top .2s,-webkit-transform .2s;
      transition: transform .2s,top .2s;
      transition: transform .2s,top .2s,-webkit-transform .2s;
-     font-family: FontAwesome;
+     font-family: 'Font Awesome 5 Free';
+     font-weight: 900;
      content: "\f105";
 }
+
+.list-group-item[data-toggle="collapse"].collapsed::after {
+    width: 0;
+    height: 0;
+    position: absolute;
+    top: calc(50% - 12px);
+    right: 10px;
+    content: '';
+    -webkit-transition: top .2s,-webkit-transform .2s;
+    transition: top .2s,-webkit-transform .2s;
+    transition: transform .2s,top .2s;
+    transition: transform .2s,top .2s,-webkit-transform .2s;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: "\f107";
+}
+
  .list-group-tree .list-group-collapse .list-group {
      margin-left: 25px;
      border-left: 1px solid #ced4da;
