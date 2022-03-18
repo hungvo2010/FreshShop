@@ -116,3 +116,11 @@ model WishList {
   @@map("wishlist")
 }
 
+model Contact {
+  id String @id @default(cuid())
+  name String
+  email String
+  submittedAt DateTime
+  subject String
+  message String @db.VarChar(1000)
+}

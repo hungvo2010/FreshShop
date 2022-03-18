@@ -23,7 +23,6 @@ function setNodesValues(subTotalPrice, totalDiscount, couponDiscount, vat, grand
 }
 
 function setValues(node, value){
-    console.log(node.innerHTML);
     node.innerHTML = "$ " + value;
 }
 
@@ -56,7 +55,7 @@ updateCartButton.addEventListener('click', event => {
         if (!resData){
             return;
         }
-        console.log(resData);
+
         const subTotalPrice = resData.totalPrice;
         const totalDiscount = resData.totalDiscount;
         const couponDiscount = resData.couponDiscount;

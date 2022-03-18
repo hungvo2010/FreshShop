@@ -27,8 +27,10 @@ class FormSubmit {
         });
     }
 
-    formSuccess(isError, message){
-        // $(this.idForm)[0].reset();
+    formSuccess(isError, message, clear){
+        if (clear){
+            $(this.idForm)[0].reset();
+        }
         this.submitMSG(isError, message);
     }
 
@@ -102,21 +104,28 @@ const successSetNewPasswordHandler = (data, textStatus, xhr) => {
 const successUpdatePasswordHandler = function (data, textStatus, xhr) {
     const status = xhr.status.toString();
     if (status.startsWith('2')){
-        this.formSuccess(true, "Update password success!")
+        this.formSuccess(true, "Update password success!", true)
     }
 }
 
 const successUpdateProfileHandler = function (data, textStatus, xhr) {
     const status = xhr.status.toString();
     if (status.startsWith('2')){
-        this.formSuccess(true, "Update profile success!");
+        this.formSuccess(true, "Update profile success!", false);
     }
 };
 
 const successRequestChangePasswordHandler = function (data, textStatus, xhr) {
     const status = xhr.status.toString();
     if (status.startsWith('2')){
-        this.formSuccess(true, "Please check your inbox to reset password")
+        this.formSuccess(true, "Please check your inbox to reset password", false)
+    }
+};
+
+const successSubmitContactForm = function (data, textStatus, xhr) {
+    const status = xhr.status.toString();
+    if (status.startsWith('2')){
+        this.formSuccess(true, "Message Submitted!", true)
     }
 };
 
@@ -126,3 +135,4 @@ new FormSubmit("#chooseForm", '/new-password', 'POST', "#msgSubmit", successSetN
 new FormSubmit("#passwordForm", '/password', 'POST', "#msgSubmit", successUpdatePasswordHandler).registerEventHandler("Did you fill in the form properly?");
 new FormSubmit("#profileForm", '/profile', 'POST', "#msgSubmit", successUpdateProfileHandler).registerEventHandler("Did you fill in the form properly?");
 new FormSubmit("#resetForm", '/reset', 'POST', "#msgSubmit", successRequestChangePasswordHandler).registerEventHandler("Did you fill in the form properly?");
+new FormSubmit("#contactForm", '/contact', 'POST', "#msgSubmit", successSubmitContactForm).registerEventHandler("Did you fill in the form properly?");

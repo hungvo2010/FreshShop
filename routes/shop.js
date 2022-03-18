@@ -48,4 +48,6 @@ router.post('/add-wishlist', protectRoutes, [
 
 router.get('/orders/:orderId', protectRoutes, shopController.getInvoice);
 
+router.post('/contact', shopController.postContact);
+
 module.exports = router;

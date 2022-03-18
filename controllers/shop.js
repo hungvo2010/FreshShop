@@ -369,3 +369,14 @@ exports.getInvoice = async (req, res, next) => {
         return next(err);
     }
 }
+
+exports.postContact = async (req, res, next) => {
+    try {
+        await shopModel.addContact(req.body);
+        res.status(201).json({});
+    }
+    
+    catch (err){
+        return next(err);
+    }
+}

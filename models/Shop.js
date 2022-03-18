@@ -215,6 +215,18 @@ async function getCoupon(cartId){
     })
 }
 
+async function addContact({email, name, message, subject}){
+    await prisma.contact.create({
+        data: {
+            email,
+            name,
+            message,
+            subject,
+            submittedAt: new Date()
+        }
+    });
+}
+
 module.exports = {
     getProducts,
     getCart,
@@ -231,5 +243,6 @@ module.exports = {
     addOrder,
     getSpecificOrder,
     getCoupon,
+    addContact,
 }
 
