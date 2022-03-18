@@ -14,6 +14,11 @@ const app = express();
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
+// cors
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    next();
+})
 // parser
 parser(app);
 // server public

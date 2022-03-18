@@ -52,10 +52,20 @@ model Token {
   @@map("token")
 }
 
+model Coupon {
+  id  String  @id @default(cuid())
+  code String
+  discount Float @default(0)
+  expireIn DateTime
+  amount Int @default(10)
+  couponItem CouponItem?
+}
+
 model Cart {
   id  String  @id @default(cuid())
   user User @relation(fields: [userId], references: [id])
   userId String
+  couponItem CouponItem[]
   cartItem CartItem[]
   @@map("cart")
 }
@@ -86,6 +96,15 @@ model OrderItem {
   orderId String
   @@id([productId, orderId])
   @@map("orderitem")
+}
+
+model CouponItem {
+  coupon Coupon @relation(fields: [couponId], references: [id])
+  couponId String
+  cart Cart @relation(fields: [cartId], references: [id])
+  cartId String
+  @@id([couponId, cartId])
+  @@map("couponitem")
 }
 
 model WishList {

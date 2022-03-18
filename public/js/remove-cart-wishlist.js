@@ -14,7 +14,10 @@ removeCart.forEach(item => {
             })
         })
         .then(res => {
-            item.closest('tr').remove();
+            const statusCode = res.status.toString();
+            if (statusCode.startsWith('2')){
+                item.closest('tr').remove();
+            }
         })
     })
 })
@@ -32,7 +35,10 @@ removeWishlist.forEach(item => {
             })
         })
         .then(res => {
-            item.closest('tr').remove();
+            const statusCode = res.status.toString();
+            if (statusCode.startsWith('2')){
+                item.closest('tr').remove();
+            }
         })
     })
 })

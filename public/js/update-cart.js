@@ -1,7 +1,4 @@
 const updateCartButton = document.querySelector("#update-cart");
-const products = document.querySelectorAll("a[data-productId]");
-const productsQuantities = document.querySelectorAll("input[type='number']");
-const productsPrices = document.querySelectorAll("p[data-price]");
 
 function addItemsToProductsInfo(products, productsQuantities){
     let productsInfo = [];
@@ -11,32 +8,35 @@ function addItemsToProductsInfo(products, productsQuantities){
     return productsInfo;
 }
 
-function calculateSubTotal(productsPrices, productsQuantities){
-    let result = 0;
-    for (let index = 0; index < productsPrices.length; index++) {
-        result += +productsPrices[index].dataset.price * +productsQuantities[index].value;
-    }
-    return result;
+function setNodesValues(subTotalPrice, totalDiscount, couponDiscount, vat, grandTotal){
+    const totalNode = document.querySelector("#subTotal");
+    const discountNode = document.querySelector("#discount");
+    const couponNode = document.querySelector("#coupon");
+    const vatNode = document.querySelector("#vat");
+    const grandNode = document.querySelector("#grand-total");
+
+    setValues(totalNode, subTotalPrice);
+    setValues(discountNode, totalDiscount);
+    setValues(couponNode, couponDiscount);
+    setValues(vatNode, vat);
+    setValues(grandNode, grandTotal);
 }
 
-function calculateDiscount(productsPrices, productsQuantities){
-    
-}
-
-function getCouponDiscount(){
-
+function setValues(node, value){
+    console.log(node.innerHTML);
+    node.innerHTML = "$ " + value;
 }
 
 function getVAT(){
-
-}
-
-function sentGrandTotal(grandTotal){
-
+    return 2;
 }
 
 updateCartButton.addEventListener('click', event => {
     event.preventDefault();
+
+    const products = document.querySelectorAll("a[data-productId]");
+    const productsQuantities = document.querySelectorAll("input[type='number']");
+    
     let productsInfo = addItemsToProductsInfo(products, productsQuantities);
 
     fetch('http://localhost:3000/update-cart', {
@@ -49,13 +49,21 @@ updateCartButton.addEventListener('click', event => {
     .then(res => {
         const statusCode = res.status.toString();
         if (statusCode.startsWith('2')){
-            let subTotal = calculateSubTotal(productsPrices, productsQuantities);
-            let discount = calculateDiscount(productsPrices, productsQuantities);
-            let couponDiscount = getCouponDiscount();
-            let vat = getVAT();
-            let grandTotal = subTotal + discount + couponDiscount + vat;
-            sentGrandTotal(grandTotal);
+            return res.json();
         }
+    })
+    .then(resData => {
+        if (!resData){
+            return;
+        }
+        console.log(resData);
+        const subTotalPrice = resData.totalPrice;
+        const totalDiscount = resData.totalDiscount;
+        const couponDiscount = resData.couponDiscount;
+        const vat = getVAT();
+        const grandTotal = +subTotalPrice - +couponDiscount + +vat;
+
+        setNodesValues(subTotalPrice, totalDiscount, couponDiscount, vat, grandTotal.toFixed(2));
     })
     
 })

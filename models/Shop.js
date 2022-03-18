@@ -89,6 +89,30 @@ async function deleteCartItem(productId, userId){
     })
 }
 
+async function updateCartItem(userId, listOfCartItems){
+    let cart = await getCart(userId);
+
+    const updateOperations = [];
+    let updateQuery;
+
+    for (let index = 0; index < listOfCartItems.length; index++) {
+        updateQuery = prisma.cartItem.update({
+            where: {
+                productId_cartId: {
+                    productId: listOfCartItems[index].productId,
+                    cartId: cart.id,
+                }
+            }, 
+            data: {
+                quantity: listOfCartItems[index].quantity
+            }
+        })
+        updateOperations.push(updateQuery);
+    }
+
+    await prisma.$transaction(updateOperations);
+}
+
 async function deleteWishlistItem(productId, userId){
     await prisma.wishList.delete({
         where: {
@@ -180,12 +204,25 @@ async function countProducts(){
     return await prisma.product.count();
 }
 
+async function getCoupon(cartId){
+    return await prisma.couponItem.findFirst({
+        where: {
+            cartId,
+        },
+        include: {
+            coupon: true
+        }
+    })
+}
+
 module.exports = {
     getProducts,
+    getCart,
     findProduct,
     countProducts,
     addProductToCart,
     getProductsInCart,
+    updateCartItem,
     getProductsInWishList,
     addProductToWishList,
     deleteWishlistItem,
@@ -193,5 +230,6 @@ module.exports = {
     getListOfOrders,
     addOrder,
     getSpecificOrder,
+    getCoupon,
 }
 

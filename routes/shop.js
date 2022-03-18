@@ -28,6 +28,8 @@ router.post('/remove-cart', protectRoutes, [
     check("productId").not().isEmpty().withMessage("Invalid product")
 ], shopController.removeCart);
 
+router.post('/update-cart', protectRoutes, shopController.updateCart);
+
 router.post('/remove-wishlist', protectRoutes, [
     check("productId").not().isEmpty().withMessage("Invalid product")
 ], shopController.removeWishlist);

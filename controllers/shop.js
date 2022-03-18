@@ -35,7 +35,25 @@ function calculateTotalPrice(products){
     products.forEach(prod => {
         total += prod.quantity * prod.product.price;
     });
-    return parseFloat(total).toFixed(2);
+    return total.toFixed(2);
+}
+
+function calculateTotalDiscount(cartItems){
+    let totalDiscount = 0;
+    cartItems.forEach(item => {
+        totalDiscount += item.quantity * 
+            (item.product.discount * item.product.price / (100 - item.product.discount)).toFixed(2);
+    })
+
+    return totalDiscount.toFixed(2);
+}
+
+async function calculateTotalCouponDiscount(cartId, cartItems){
+    const totalPrice = calculateTotalPrice(cartItems);
+    const couponItem = await shopModel.getCoupon(cartId);
+    const discount = couponItem ? couponItem.coupon.discount : 0;
+
+    return (totalPrice * discount / 100).toFixed(2);
 }
 
 exports.getShop = async (req, res, next) => {
@@ -264,10 +282,34 @@ exports.removeCart = async (req, res, next) => {
     const productId = req.body.productId;
     try {
         await shopModel.deleteCartItem(productId, req.user.id);
-        res.status(204).json({message: "success"});
+        res.status(204).json({});
     }
 
     catch (err) {
+        return next(err);
+    }
+}
+
+exports.updateCart = async (req, res, next) => {
+    try {
+        const listOfCartItems = req.body;
+        await shopModel.updateCartItem(req.user.id, listOfCartItems);
+        const cart = await shopModel.getCart(req.user.id);
+        const cartItems = await getProductsFromCart(req);
+        
+        const totalPrice = calculateTotalPrice(cartItems);
+        const totalDiscount = calculateTotalDiscount(cartItems);
+        const couponDiscount = await calculateTotalCouponDiscount(cart.id, cartItems);
+
+        res.status(200).json({
+            message: "success",
+            totalPrice,
+            totalDiscount,
+            couponDiscount,
+        })
+    }
+
+    catch (err){
         return next(err);
     }
 }
