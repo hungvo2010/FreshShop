@@ -230,10 +230,16 @@ exports.getCart = async (req, res, next) => {
     try {
         const cartItems = await getProductsFromCart(req);
         const totalPrice = calculateTotalPrice(cartItems);
+        const totalDiscount = calculateTotalDiscount(cartItems);
+        const totalCouponDiscount = cartItems.length > 0 ? await calculateTotalCouponDiscount(cartItems[0].cartId, cartItems) : 0;
+        const vatFee = 2;
 
         return res.render('shop/cart', {
             cartItems: req.user ? cartItems : [],
             totalPrice,
+            totalDiscount,
+            totalCouponDiscount,
+            total: (totalPrice - totalCouponDiscount + vatFee).toFixed(2),
             pageTitle: 'Your Cart',
         })
     }

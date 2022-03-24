@@ -121,12 +121,12 @@
                                                         <h4><%= product.title %> </h4>
                                                         <h5> 
                                                             <% if (product.discount !== 0) { %>
-                                                                <del>$ <%= (product.price * (100 - product.discount) / 100).toFixed(2) %> </del>
+                                                                <del>$ <%= (product.price * 100 / (100 - product.discount)).toFixed(2) %> </del>
                                                             <% } %>
                                                             $<%= product.price %> 
                                                         </h5>
                                                         <p><%= product.description %> </p>
-                                                        <a class="cart" data-productId="<%= product.id %>" href="#">Add to Cart</a>
+                                                        <a class="btn hvr-hover cart" data-productId="<%= product.id %>" href="#">Add to Cart</a>
                                                     </div>
                                                 </div>
                                             </div>
