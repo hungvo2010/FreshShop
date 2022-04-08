@@ -2,7 +2,7 @@ const express = require('express');
 const { check } = require('express-validator/check');
 
 const protectRoutes = require('../middleware/protectRoutes');
-const shopController = require('../controllers/shop');
+const shopController = require('../controllers/shopController');
 
 const router = express.Router();
 

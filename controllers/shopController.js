@@ -1,9 +1,9 @@
-const populateInvoice = require('../util/populateInvoice');
-const getItemsPerPage = require('../util/ItemsPerPage');
+// const populateInvoice = require('../util/populateInvoice');
+// const getItemsPerPage = require('../util/ItemsPerPage');
 
-const shopModel = require('../models/Shop');
+const shopModel = require('../models/shopModel');
 
-const ITEMS_PER_PAGE = getItemsPerPage();
+// const ITEMS_PER_PAGE = getItemsPerPage();
 
 const { validationResult } = require('express-validator/check');
 
@@ -17,10 +17,10 @@ function validateRequestBody(req, res){
     return true;
 }
 
-function getQueryPage(req){
-    let page = req.query.page || 1;
-    return parseInt(page);
-}
+// function getQueryPage(req){
+//     let page = req.query.page || 1;
+//     return parseInt(page);
+// }
 
 async function getProductsFromCart(req){
     if (req.user){

@@ -21,12 +21,10 @@ async function countAdminProducts(userId){
     })
 }
 
-async function getAdminProducts(userId, offset, limit){
+async function getSellerProducts(userId){
     return await prisma.product.findMany({
-        skip: offset,
-        take: limit,
         where: {
-            userId,
+            sellerId: userId,
         }
     })
 }
@@ -62,7 +60,7 @@ module.exports = {
     createMultipleProducts,
     countAdminProducts,
     findProduct,
-    getAdminProducts,
+    getSellerProducts,
     updateProduct,
     deleteProduct
 }

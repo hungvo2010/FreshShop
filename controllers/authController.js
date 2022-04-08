@@ -1,4 +1,4 @@
-const authModel = require('../models/Auth');
+const authModel = require('../models/authModel');
 const crypto = require("crypto");
 
 const Email = require('../util/Email');
@@ -9,6 +9,7 @@ const { validationResult } = require('express-validator/check');
 
 function validateRequestBody(req, res){
     const errors = validationResult(req);
+    
     if (!errors.isEmpty()){
         const msg = errors.array()[0].msg;
         res.status(422).json({message: msg});

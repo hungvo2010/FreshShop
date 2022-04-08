@@ -1,9 +1,9 @@
-const adminRoutes = require('../routes/admin');
-const shopRoutes = require('../routes/shop');
-const authRoutes = require('../routes/auth');
+const sellerRoutes = require('../routes/sellerRoute');
+const shopRoutes = require('../routes/shopRoute');
+const authRoutes = require('../routes/authRoute');
 
 module.exports = app => {
     app.use(authRoutes);
-    app.use('/admin', adminRoutes);
+    app.use('/seller', sellerRoutes);
     app.use(shopRoutes);
 }
