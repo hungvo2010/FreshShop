@@ -1,5 +1,0 @@
--- AlterTable
-ALTER TABLE `product` ADD COLUMN `available` BOOLEAN NOT NULL DEFAULT true,
-    ADD COLUMN `discount` DECIMAL(15, 2) NOT NULL DEFAULT 0,
-    ADD COLUMN `quantity` INTEGER NOT NULL DEFAULT 0,
-    ADD COLUMN `type` VARCHAR(191) NOT NULL DEFAULT 'others';
